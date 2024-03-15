@@ -33,6 +33,18 @@ const Nav = () => {
   const handleTheme = () => {
     theme === "dark" ? setTheme("light") : setTheme("dark");
   };
+  
+  const toggleDialog = async (value) => {
+    if (!value) {
+      const close = await confirm();
+      if (close) {
+        setOpen(false);
+      }
+    } else {
+      setOpen(true);
+    }
+  }
+
 
   return (
     <nav
@@ -51,16 +63,7 @@ const Nav = () => {
       />
       <Dialog
         open={open}
-        onOpenChange={async (value) => {
-          if (!value) {
-            const close = await confirm();
-            if (close) {
-              setOpen(false);
-            }
-          } else {
-            setOpen(true);
-          }
-        }}
+        onOpenChange={toggleDialog}
       >
         <DialogTrigger asChild>
           <Button
@@ -71,7 +74,7 @@ const Nav = () => {
             <span className="font-normal hidden sm:inline-block">Create</span>
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="lg:min-w-[600px]">
           <ArgumentForm closeDialog={() => setOpen(false)} />
         </DialogContent>
       </Dialog>

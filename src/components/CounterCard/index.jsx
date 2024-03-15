@@ -19,6 +19,9 @@ import { toast } from "sonner";
 import useConfirm from "@/hooks/useConfirm";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import ArgumentForm from "../Forms/ArgumentForm";
+import FancyNumber from "../Number";
+import { CgMailReply } from "react-icons/cg";
+import { MdOutlineReportProblem } from "react-icons/md";
 
 const Dialogs = {
   counterFormDialog: 'counterForm',
@@ -32,7 +35,7 @@ const Forms = {
 
 const CounterCard = ({ arg }) => {
   const [voteState, setVoteState] = useState(0);
-  const [voteCount, setVoteCount] = useState(0);
+  const [voteCount, setVoteCount] = useState(56);
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState(null)
   const [ConfirmationDialog, confirm] = useConfirm(
@@ -62,27 +65,31 @@ const CounterCard = ({ arg }) => {
     setDialog(dialog)
   }
 
+  const toggleDialog = async (value) => {
+    if (dialog === Dialogs.reportFormDialog) {
+      return setOpen(value)
+    }
+    if (!value) {
+      const close = await confirm();
+      if (close) {
+        setOpen(false);
+      }
+    } else {
+      setOpen(true);
+    }
+  }
+
   const Form = Forms[dialog]
 
   return (
     <>
-      <Dialog open={open} onOpenChange={async (value)=>{
-        if(!value){
-          const close = await confirm()
-          if(close){
-            setOpen(false)
-          }
-        }
-        else{
-          setOpen(true)
-        }
-      }}>
+      <Dialog open={open} onOpenChange={toggleDialog}>
         <DropdownMenu>
           <Card className="m-1 relative">
             <CardContent className="flex p-3 pt-6 pb-0 items-start">
               <div className="flex flex-col pr-2 items-center">
                 <FaAngleUp size={24} className="cursor-pointer" onClick={upVote} />
-                <div className="text-sm">{voteCount}</div>
+                <FancyNumber number={voteCount} className="text-sm" />
                 <FaAngleDown
                   size={24}
                   className="cursor-pointer"
@@ -130,10 +137,10 @@ const CounterCard = ({ arg }) => {
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuGroup>
               <DialogTrigger asChild onClick={()=>openDialog(Dialogs.counterFormDialog)}>
-                <DropdownMenuItem className="cursor-pointer">Counter</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer gap-2"><CgMailReply size={16} /> Counter</DropdownMenuItem>
               </DialogTrigger>
               <DialogTrigger asChild onClick={()=>openDialog(Dialogs.reportFormDialog)}>
-                <DropdownMenuItem className="cursor-pointer text-red-600">Report</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-red-600 gap-2"><MdOutlineReportProblem size={16} /> Report</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuGroup>
           </DropdownMenuContent>

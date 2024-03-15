@@ -165,7 +165,7 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="overflow-auto max-h-[70vh]">
-          <div className="space-y-4">
+          <div className="space-y-5 mt-3">
             <ReadMore
               minLines={1}
               className="border-l-4 border-slate-700 p-2 bg-slate-300 dark:bg-slate-800 dark:border-slate-900"
@@ -308,7 +308,9 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
                 value={argStrength}
                 max={100}
                 className={cn("h-2", {
-                  "[&>*]:bg-green-600": argStrength > 40,
+                  "[&>*]:bg-red-600": argStrength < 40,
+                  "[&>*]:bg-yellow-600": argStrength > 60,
+                  "[&>*]:bg-green-600": argStrength > 80,
                 })}
               />
             </div>
