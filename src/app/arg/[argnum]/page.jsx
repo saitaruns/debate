@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import ListCard from '@/components/ListCard';
 import CounterCard from '@/components/CounterCard';
 import { Button } from '@/components/ui/button';
+import Loading from './loading';
 
 const getData = ()=>{
   return new Promise((resolve)=>{
@@ -10,7 +11,6 @@ const getData = ()=>{
     }, 1000)
   })
 }
-
 
 export default async function Argument() {
   const argus = [
@@ -242,7 +242,7 @@ export default async function Argument() {
 
   const data = await getData();
   
-  const getCard = (index) => {
+  const GetCard = ({index}) => {
     const tempArgs = [];
     const argType = argus[index].type;
     const isArgument = argType === 'argument';
@@ -260,7 +260,7 @@ export default async function Argument() {
     return (
       <div key={key} className={clsx('flex', 'flex-col', isArgument ? 'items-start' : 'items-end')}>
         <ListCard 
-          className="w-11/12 sm:w-10/12 md:w-8/12 overflow-auto mb-3" 
+          className="w-11/12 sm:w-10/12 md:w-8/12 overflow-auto" 
           maxHeight="600px"
           showMore={Math.random() < 0.5}>
           {tempArgs.map((arg) => (
@@ -279,11 +279,13 @@ export default async function Argument() {
   }, []);
 
   return (
-      <div className="w-11/12 lg:w-10/12 mx-auto">
+      <>
         <div className="text-xl font-normal my-5 flex">
           <h1 className='flex-1'>The Earth is flat because it looks flat</h1>
         </div>
-        {nums.map((num) => getCard(num))}
-      </div>
+        <div className='space-y-3'>
+          {nums.map((num) => <GetCard index={num} />)}
+        </div>
+      </>
   );
 }

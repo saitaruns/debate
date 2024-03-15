@@ -27,6 +27,8 @@ const ReadMore = ({ children: text, className, minLines = 3}) => {
 
   const pClass = clsx(isTruncated && `line-clamp-${minLines}`, "text-sm overflow-hidden");
 
+  if(!text) return null
+
   return (
     <div className={className}>
       <p ref={paragraphRef} className={pClass}>{text}</p>

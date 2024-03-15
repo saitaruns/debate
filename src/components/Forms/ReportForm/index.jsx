@@ -85,7 +85,7 @@ const ReportForm = ({closeDialog}) => {
           control={reportForm.control}
           name="items"
           render={() => (
-            <FormItem>
+            <FormItem className="space-y-3">
               {REPORT_ITEMS.map((item) => (
                 <FormField
                   key={item.id}
@@ -95,7 +95,7 @@ const ReportForm = ({closeDialog}) => {
                     return (
                       <FormItem
                         key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0 mt-4"
+                        className="flex flex-row items-start space-x-3 space-y-0 mt-4 w-full"
                       >
                         <FormControl>
                           <Checkbox
@@ -107,7 +107,7 @@ const ReportForm = ({closeDialog}) => {
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="font-normal w-full">
                           {item.label}
                         </FormLabel>
                       </FormItem>
@@ -119,7 +119,7 @@ const ReportForm = ({closeDialog}) => {
             </FormItem>
           )}
         />
-        <DialogFooter>
+        <DialogFooter className="mt-4">
           <Button type="submit">Report</Button>
         </DialogFooter>
       </form>

@@ -4,8 +4,9 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div className="w-11/12 lg:w-10/12 mx-auto space-y-5">
-      <Skeleton className="w-10/12 sm:w-8/12 md:w-7/12 h-8 mt-4" />
+    <>
+      <Skeleton className="w-10/12 sm:w-8/12 md:w-7/12 h-8 my-4" />
+      <div className="space-y-3">
       {[1, 2].map((i) => (
         <div key={i} className={clsx("flex flex-col space-y-3", i % 2 === 0 ? "items-end" : "items-start")}>
           {[1, 2].map((j)=>(
@@ -21,7 +22,8 @@ const Loading = () => {
             </div>))}
         </div>
       ))}
-    </div>
+      </div>
+    </>
   );
 };
 

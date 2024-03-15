@@ -26,8 +26,10 @@ const ListCard = ({ children, className, maxHeight, showMore = false}) => {
     <ScrollArea className={cn(className, "relative")}>
       <div ref={ref} className="overflow-y-auto flex flex-col" style={{maxHeight}}>
         {children}
-        {showMore ? <Button variant="ghost" className="w-fit mx-auto mt-1">Show More <BiPlus/>
-        </Button> : null}
+        {showMore ? 
+          (<Button variant="ghost" className="w-fit mx-auto mt-1">Show More <BiPlus/>
+          </Button>) 
+        : null}
       </div>
       <div className={clsx("w-full absolute h-full pointer-events-none -translate-y-full",{
         "shadow-inset-bottom": isShadow && scrollState === 0,
