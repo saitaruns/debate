@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -7,15 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 
-const getData = ()=>{
-  return new Promise((resolve)=>{
-    setTimeout(()=>{
-      resolve([])
-    }, 1)
-  })
-}
+const getData = () =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([]);
+    }, 1);
+  });
 
 export default async function Home() {
   const args = [
@@ -128,55 +127,55 @@ export default async function Home() {
   const data = await getData();
 
   return (
-      <div className="flex m-3">
-        <div className="w-2/12"></div>
-        <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3">
-            {args.map((arg) => (
-              <Link key={arg.id} className="flex w-full" href={`/arg/${arg.id}`}>
-                <Card key={arg.id} className="w-full mb-3">
-                  <CardHeader className="p-4">
-                    <CardTitle className="text-md truncate">
-                      {arg.title} | Cupidatat irure officia nostrud ex minim
-                      reprehenderit occaecat do culpa eu nisi reprehenderit.
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      {arg.votes} votes | {arg.arguments} arguments
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="line-clamp-3 text-xs">
-                      {arg.description} | Duis non aliquip aute excepteur
-                      voluptate. Amet labore fugiat aliquip proident aliqua
-                      laborum nisi excepteur sit laborum adipisicing. Officia qui
-                      occaecat consequat minim reprehenderit ipsum aliqua minim
-                      commodo consequat consectetur.
-                    </p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between px-4">
-                    <div className="relative flex gap-2 justify-center items-center">
-                      <span className="relative flex size-3">
-                        <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full size-full bg-green-500"></span>
-                      </span>
-                      <p className="text-xs font-medium leading-none mt-[2px]">
-                        5 members active
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="" />
-                        <AvatarFallback className="text-[8px]">OM</AvatarFallback>
-                      </Avatar>
-                      <p className="text-xs font-medium leading-none">
-                        Sofia Davis{" "}
-                        <span className="font-normal">posted 5 days ago</span>
-                      </p>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
-        </div>
+    <div className="flex m-3">
+      <div className="w-2/12" />
+      <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3">
+        {args.map((arg) => (
+          <Link key={arg.id} className="flex w-full" href={`/arg/${arg.id}`}>
+            <Card key={arg.id} className="w-full mb-3">
+              <CardHeader className="p-4">
+                <CardTitle className="text-md truncate">
+                  {arg.title} | Cupidatat irure officia nostrud ex minim
+                  reprehenderit occaecat do culpa eu nisi reprehenderit.
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {arg.votes} votes |{arg.arguments} arguments
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="line-clamp-3 text-xs">
+                  {arg.description} | Duis non aliquip aute excepteur voluptate.
+                  Amet labore fugiat aliquip proident aliqua laborum nisi
+                  excepteur sit laborum adipisicing. Officia qui occaecat
+                  consequat minim reprehenderit ipsum aliqua minim commodo
+                  consequat consectetur.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-between px-4">
+                <div className="relative flex gap-2 justify-center items-center">
+                  <span className="relative flex size-3">
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full size-full bg-green-500" />
+                  </span>
+                  <p className="text-xs font-medium leading-none mt-[2px]">
+                    5 members active
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Avatar className="w-6 h-6">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="text-[8px]">OM</AvatarFallback>
+                  </Avatar>
+                  <p className="text-xs font-medium leading-none">
+                    Sofia Davis{" "}
+                    <span className="font-normal">posted 5 days ago</span>
+                  </p>
+                </div>
+              </CardFooter>
+            </Card>
+          </Link>
+        ))}
       </div>
+    </div>
   );
 }

@@ -24,7 +24,12 @@ const MultiSelectInput = React.forwardRef(
     const isDesktop = useMediaQuery("(min-width: 768px)");
 
     const GetButton = () => (
-      <Button variant="outline" type="button" size="sm" className="h-8 border-dashed flex">
+      <Button
+        variant="outline"
+        type="button"
+        size="sm"
+        className="h-8 border-dashed flex"
+      >
         <BiPlusCircle className="mr-2 h-4 w-4" />
         <span className="hidden lg:block">Add Logical Fallacies</span>
         {selectedValues?.length > 0 && (
@@ -66,9 +71,7 @@ const MultiSelectInput = React.forwardRef(
     if (!isDesktop) {
       return (
         <Drawer>
-          <DrawerTrigger asChild>
-            {GetButton()}
-          </DrawerTrigger>
+          <DrawerTrigger asChild>{GetButton()}</DrawerTrigger>
           <DrawerContent>
             <CommandBox
               options={options}
@@ -83,9 +86,7 @@ const MultiSelectInput = React.forwardRef(
 
     return (
       <Popover {...props} modal>
-        <PopoverTrigger asChild>
-          {GetButton()}
-        </PopoverTrigger>
+        <PopoverTrigger asChild>{GetButton()}</PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
           <CommandBox
             options={options}
@@ -98,6 +99,8 @@ const MultiSelectInput = React.forwardRef(
     );
   }
 );
+
+MultiSelectInput.displayName = "MultiSelectInput";
 
 const CommandBox = ({ options, selectedValues, onChange, maxSelected }) => {
   const MotionCommandItem = motion(CommandItem, { forwardMotionProps: true });

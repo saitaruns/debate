@@ -30,7 +30,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 import useConfirm from "@/hooks/useConfirm";
 import MultiSelectInput from "@/components/MultiSelectInput";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const MAX_EVIDENCE = 5;
 const MAX_ARG_LENGTH = 500;
@@ -62,7 +66,11 @@ const FALLACIES = [
   { label: "Bandwagon Fallacy", value: "bandwagon-fallacy" },
 ];
 
-const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
+const ArgumentForm = ({
+  arg = {},
+  closeDialog = () => {},
+  isCounter = false,
+}) => {
   const [textareaRows, setTextareaRows] = useState(1);
   const [argStrength, setArgStrength] = useState(0);
   const [ConfirmationDialog, confirm] = useConfirm(
@@ -71,20 +79,40 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
   );
 
   const counterFormSchema = z.object({
-    arg: z.string()
-          .min(MIN_ARG_LENGTH,`Argument must be at least ${MIN_ARG_LENGTH}  characters long`)
-          .max(MAX_ARG_LENGTH,`Argument must be at most ${MAX_ARG_LENGTH} characters long`),
-    evidence: z.array(z.object({source: z.string().refine((value) => LINK_REGEX.test(value), {
-                        message: "Please enter a valid URL",
-                      }),}))
-                .max(MAX_EVIDENCE, `You can only add up to ${MAX_EVIDENCE} evidence`)
-                .refine((evidence) => {
-                  const sources = evidence.map((e) => e.source);
-                  const uniqueSources = [...new Set(sources)];
-                  return uniqueSources.length === sources.length;
-                }, "Evidence must be unique"),
-    ...(isCounter ? {fallacies: z.array(z.string())
-                .max(MAX_FALLACIES,`You can only select up to ${MAX_FALLACIES} fallacies`)} : {})
+    arg: z
+      .string()
+      .min(
+        MIN_ARG_LENGTH,
+        `Argument must be at least ${MIN_ARG_LENGTH}  characters long`
+      )
+      .max(
+        MAX_ARG_LENGTH,
+        `Argument must be at most ${MAX_ARG_LENGTH} characters long`
+      ),
+    evidence: z
+      .array(
+        z.object({
+          source: z.string().refine((value) => LINK_REGEX.test(value), {
+            message: "Please enter a valid URL",
+          }),
+        })
+      )
+      .max(MAX_EVIDENCE, `You can only add up to ${MAX_EVIDENCE} evidence`)
+      .refine((evidence) => {
+        const sources = evidence.map((e) => e.source);
+        const uniqueSources = [...new Set(sources)];
+        return uniqueSources.length === sources.length;
+      }, "Evidence must be unique"),
+    ...(isCounter
+      ? {
+          fallacies: z
+            .array(z.string())
+            .max(
+              MAX_FALLACIES,
+              `You can only select up to ${MAX_FALLACIES} fallacies`
+            ),
+        }
+      : {}),
   });
 
   const counterForm = useForm({
@@ -92,37 +120,49 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
     defaultValues: {
       arg: "",
       evidence: [{ source: "" }],
-      ...(isCounter ? {fallacies: []} : {})
+      ...(isCounter ? { fallacies: [] } : {}),
     },
   });
 
   useEffect(() => {
     const calculateArgStrength = () => {
       const argLength = counterForm.getValues("arg").length || 0;
-  
-      const evidenceLength = counterForm?.getValues("evidence")
-        ?.filter((e) => LINK_REGEX.test(e.source.trim()))?.length || 0;
-  
+
+      const evidenceLength =
+        counterForm
+          .getValues("evidence")
+          .filter((e) => LINK_REGEX.test(e.source.trim()))?.length || 0;
+
       const fallaciesLength = counterForm.getValues("fallacies")?.length || 0;
-  
-      const weight = evidenceLength !== 0 ? evidenceLength / (evidenceLength + 1) : 1;
-  
-      
-      const argComponent = (((isCounter ? 65 : 70) / weight) / MAX_ARG_LENGTH) * argLength || 0;
-      const evidenceComponent = ((isCounter ? 25 : 30) / (1 - weight) / MAX_EVIDENCE) * evidenceLength || 0;
-      const fallacyComponent = isCounter ? ((10 / MAX_FALLACIES) * fallaciesLength || 0) : 0;
-      
+
+      const weight =
+        evidenceLength !== 0 ? evidenceLength / (evidenceLength + 1) : 1;
+
+      const argComponent =
+        ((isCounter ? 65 : 70) / weight / MAX_ARG_LENGTH) * argLength || 0;
+      const evidenceComponent =
+        ((isCounter ? 25 : 30) / (1 - weight) / MAX_EVIDENCE) *
+          evidenceLength || 0;
+      const fallacyComponent = isCounter
+        ? (10 / MAX_FALLACIES) * fallaciesLength || 0
+        : 0;
+
       const argStrength =
-      weight * argComponent + ((1 - weight) * evidenceComponent) + fallacyComponent;
-      
-      // console.clear();
-      // console.log(weight, argStrength, argComponent, evidenceComponent, fallacyComponent, argLength, evidenceLength, fallaciesLength);
-  
+        weight * argComponent +
+        (1 - weight) * evidenceComponent +
+        fallacyComponent;
+
       setArgStrength(argStrength);
     };
-    const subscription = counterForm.watch(calculateArgStrength)
-    return () => subscription.unsubscribe()
-  }, [counterForm.watch, counterForm.getValues, setArgStrength])
+    const subscription = counterForm.watch(calculateArgStrength);
+    return () => subscription.unsubscribe();
+  }, [
+    counterForm.watch,
+    counterForm.getValues,
+    setArgStrength,
+    counterForm,
+    isCounter,
+  ]);
 
   const { fields, append, remove } = useFieldArray({
     control: counterForm.control,
@@ -151,15 +191,17 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
     const evidence = counterForm.getValues("evidence");
     const value = evidence.at(-1)?.source;
 
-    return (evidence.length === 0) || (evidence.length < MAX_EVIDENCE && LINK_REGEX.test(value))
+    return (
+      evidence.length === 0 ||
+      (evidence.length < MAX_EVIDENCE && LINK_REGEX.test(value))
+    );
   };
 
   return (
     <Form {...counterForm}>
       <form onSubmit={counterForm.handleSubmit(onCounterArgumentSubmit)}>
         <DialogHeader className="mb-3">
-          <DialogTitle>
-            {isCounter ? "Counter" : ""}{" "}Argument</DialogTitle>
+          <DialogTitle>{isCounter ? "Counter" : ""} Argument</DialogTitle>
           <DialogDescription>
             Make your argument with good explanation and reliable evidence.
           </DialogDescription>
@@ -267,26 +309,26 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
                 </FormItem>
               )}
             />
-            {isCounter ? (<FormField
-              control={counterForm.control}
-              name="fallacies"
-              render={({ field }) => (
-                <FormItem className="mx-1 mt-3">
-                  <FormLabel>
-                    Select relevant fallcies
-                  </FormLabel>
-                  <FormControl>
-                    <MultiSelectInput
-                      {...field}
-                      options={FALLACIES}
-                      selectedValues={field.value}
-                      maxSelected={MAX_FALLACIES}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />) : null}
+            {isCounter ? (
+              <FormField
+                control={counterForm.control}
+                name="fallacies"
+                render={({ field }) => (
+                  <FormItem className="mx-1 mt-3">
+                    <FormLabel>Select relevant fallcies</FormLabel>
+                    <FormControl>
+                      <MultiSelectInput
+                        {...field}
+                        options={FALLACIES}
+                        selectedValues={field.value}
+                        maxSelected={MAX_FALLACIES}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
           </div>
         </ScrollArea>
         <DialogFooter className="mt-4 flex-col space-y-3 sm:flex-row">
@@ -315,7 +357,9 @@ const ArgumentForm = ({ arg = {}, closeDialog = ()=>{}, isCounter = false}) => {
               />
             </div>
           </Popover>
-          <Button type="submit" className="m-0">Post</Button>
+          <Button type="submit" className="m-0">
+            Post
+          </Button>
         </DialogFooter>
         <ConfirmationDialog />
       </form>
