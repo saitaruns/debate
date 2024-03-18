@@ -1,8 +1,12 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 
-function FancyNumber({ number, className }) {
+function FancyNumber({ className, number: _num, children }) {
+  const number = _num || children;
+
   const numberArray = useMemo(() => {
     const arr = [];
     for (let i = number - 5; i < number + 6; i++) {
@@ -13,10 +17,16 @@ function FancyNumber({ number, className }) {
   }, []); // ensure the array is only created once
 
   return (
-    <motion.div
+    <motion.span
       className={cn(
         className,
-        "relative w-6 h-6 pointer-events-none overflow-hidden"
+        "relative pointer-events-none overflow-hidden h-6",
+        {
+          "w-3": number < 10,
+          "w-6": number >= 10 && number < 100,
+          "w-8": number >= 100,
+          "w-10": number >= 1000,
+        }
       )}
     >
       {numberArray.map((num) => (
@@ -33,12 +43,12 @@ function FancyNumber({ number, className }) {
             stiffness: 300,
           }}
           key={num}
-          className="absolute inset-0 flex justify-center"
+          className="absolute inset-0 flex justify-center items-center"
         >
           {num}
         </motion.span>
       ))}
-    </motion.div>
+    </motion.span>
   );
 }
 

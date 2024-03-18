@@ -331,10 +331,10 @@ const ArgumentForm = ({
             ) : null}
           </div>
         </ScrollArea>
-        <DialogFooter className="mt-4 flex-col space-y-3 sm:flex-row">
+        <DialogFooter className="mt-4 flex-col space-y-3 sm:flex-row sm:items-end">
           <Popover>
             <div className="space-y-3 flex-1">
-              <p className="text-sm font-medium flex gap-1 items-center">
+              <p className="text-sm font-medium flex gap-1">
                 <span>Argument Strength</span>
                 <PopoverTrigger>
                   <BsInfoCircle className="cursor-pointer" />

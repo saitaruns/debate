@@ -8,9 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+import FancyNumber from "@/components/Number";
 
 const getData = () =>
   new Promise((resolve) => {
@@ -132,21 +130,21 @@ export default async function Home() {
   return (
     <div className="flex m-3">
       <div className="w-2/12" />
-      <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3">
+      <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3 space-y-2">
         {args.map((arg) => (
           <Link key={arg.id} className="flex w-full" href={`/arg/${arg.id}`}>
-            <Card key={arg.id} className="w-full mb-3">
-              <CardHeader className="p-4">
-                <CardTitle className="text-md truncate">
+            <Card key={arg.id} className="w-full">
+              <CardHeader className="p-3">
+                <CardTitle className="text-md font-medium truncate">
                   {arg.title} | Cupidatat irure officia nostrud ex minim
                   reprehenderit occaecat do culpa eu nisi reprehenderit.
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  {arg.votes} votes |{arg.arguments} arguments
+                  {arg.votes} votes | {arg.arguments} arguments
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <p className="line-clamp-3 text-xs">
+              <CardContent className="p-3 pt-0">
+                <p className="line-clamp-2 text-xs">
                   {arg.description} | Duis non aliquip aute excepteur voluptate.
                   Amet labore fugiat aliquip proident aliqua laborum nisi
                   excepteur sit laborum adipisicing. Officia qui occaecat
@@ -154,15 +152,16 @@ export default async function Home() {
                   consequat consectetur.
                 </p>
               </CardContent>
-              <CardFooter className="flex justify-between px-4">
-                <div className="relative flex gap-2 justify-center items-center">
+              <CardFooter className="flex justify-between px-4 pb-2">
+                <div className="relative flex justify-center gap-1 items-center">
                   <span className="relative flex size-3">
                     <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex rounded-full size-full bg-green-500" />
                   </span>
-                  <p className="text-xs font-medium leading-none mt-[2px]">
-                    5 members active
-                  </p>
+                  <div className="text-xs font-medium mt-[2px] flex items-center">
+                    <FancyNumber>{Math.ceil(Math.random() * 10)}</FancyNumber>{" "}
+                    members active
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Avatar className="w-6 h-6">

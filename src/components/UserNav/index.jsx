@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { signOut } from "next-auth/react";
+import { LogOut, Settings, User } from "lucide-react";
 
 export function UserNav() {
   const { name, email, image } = useContext(AuthContext);
@@ -46,11 +47,20 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <User size={16} className="mr-2" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings size={16} className="mr-2" />
+            Settings
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+          <LogOut size={16} className="mr-2" />
+          Log out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
