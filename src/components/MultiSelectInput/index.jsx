@@ -20,7 +20,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 const MultiSelectInput = React.forwardRef(
-  ({ options, selectedValues, onChange, maxSelected, props }) => {
+  ({ options, selectedValues, onChange, maxSelected, props }, ref) => {
     const isDesktop = useMediaQuery("(min-width: 768px)");
 
     const GetButton = () => (

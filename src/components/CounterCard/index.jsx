@@ -28,11 +28,6 @@ const Dialogs = {
   reportFormDialog: 'reportForm'
 }
 
-const Forms = {
-  "counterForm": ArgumentForm,
-  "reportForm" : ReportForm,
-}
-
 const CounterCard = ({ arg }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteCount, setVoteCount] = useState(56);
@@ -79,7 +74,10 @@ const CounterCard = ({ arg }) => {
     }
   }
 
-  const Form = Forms[dialog]
+  const Forms = {
+    "counterForm": <ArgumentForm arg={arg} closeDialog={()=>setOpen(false)} isCounter />,
+    "reportForm" : <ReportForm closeDialog={()=>setOpen(false)}/>,
+  }  
 
   return (
     <>
@@ -125,7 +123,7 @@ const CounterCard = ({ arg }) => {
             <CardFooter className="flex justify-end mt-3">
               <div className="flex items-center space-x-2">
                 <Avatar className="w-6 h-6">
-                  <AvatarImage src="/avatars/01.png" />
+                  <AvatarImage src="" />
                   <AvatarFallback className="text-[8px]">OM</AvatarFallback>
                 </Avatar>
                 <p className="text-xs font-medium leading-none">
@@ -149,7 +147,7 @@ const CounterCard = ({ arg }) => {
           onPointerDownOutside={(e) => {e.preventDefault();}}
           className={cn(dialog === Dialogs.counterFormDialog && "lg:min-w-[700px]")}
         >
-          <Form arg={arg} closeDialog={()=>setOpen(false)} isCounter />
+          {Forms[dialog]}
         </DialogContent>
       </Dialog>
       <ConfirmationDialog />

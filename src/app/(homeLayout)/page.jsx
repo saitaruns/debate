@@ -132,7 +132,7 @@ export default async function Home() {
         <div className="w-2/12"></div>
         <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3">
             {args.map((arg) => (
-              <Link key={arg} className="flex w-full" href={`/arg/${arg.id}`}>
+              <Link key={arg.id} className="flex w-full" href={`/arg/${arg.id}`}>
                 <Card key={arg.id} className="w-full mb-3">
                   <CardHeader className="p-4">
                     <CardTitle className="text-md truncate">
@@ -154,9 +154,9 @@ export default async function Home() {
                   </CardContent>
                   <CardFooter className="flex justify-between px-4">
                     <div className="relative flex gap-2 justify-center items-center">
-                      <span class="relative flex size-3">
-                        <span class="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full size-full bg-green-500"></span>
+                      <span className="relative flex size-3">
+                        <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full size-full bg-green-500"></span>
                       </span>
                       <p className="text-xs font-medium leading-none mt-[2px]">
                         5 members active
@@ -164,7 +164,7 @@ export default async function Home() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Avatar className="w-6 h-6">
-                        <AvatarImage src="/avatars/01.png" />
+                        <AvatarImage src="" />
                         <AvatarFallback className="text-[8px]">OM</AvatarFallback>
                       </Avatar>
                       <p className="text-xs font-medium leading-none">

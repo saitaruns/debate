@@ -1,8 +1,6 @@
 import clsx from 'clsx';
 import ListCard from '@/components/ListCard';
 import CounterCard from '@/components/CounterCard';
-import { Button } from '@/components/ui/button';
-import Loading from './loading';
 
 const getData = ()=>{
   return new Promise((resolve)=>{
