@@ -11,9 +11,9 @@ const HomeLoading = () => {
             <Skeleton className="h-8" />
             <Skeleton className="h-4 w-2/12" />
             <div className="space-y-2">
-
-              
-              {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-3" />))}
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-3" />
+              ))}
             </div>
             <div className="flex justify-between">
               <Skeleton className="h-4 w-32" />

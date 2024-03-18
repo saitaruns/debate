@@ -1,11 +1,20 @@
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Auth | Debate",
   description: "auth page",
 };
 
-export default function AuthLayout({ children }) {
+export default async function AuthLayout({ children }) {
+  const session = await getServerSession(authOptions);
+
+  if (session) {
+    return redirect("/");
+  }
+
   return (
     <div>
       <h2 className="text-2xl absolute font-bold text-center w-full top-3">
