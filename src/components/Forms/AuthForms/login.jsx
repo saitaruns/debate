@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { BsGoogle } from "react-icons/bs";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -37,7 +37,13 @@ export function LoginForm() {
   }
 
   async function handleGoogleLogin() {
-    signIn("google", { callbackUrl: "/", redirect: false });
+    const supabase = createClient();
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: location.origin + "/auth/callback",
+      },
+    });
   }
 
   return (

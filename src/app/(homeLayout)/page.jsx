@@ -125,7 +125,7 @@ export default async function Home() {
     },
   ];
 
-  const data = await getData();
+  const d = await getData();
 
   return (
     <div className="flex m-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import clsx from "clsx";

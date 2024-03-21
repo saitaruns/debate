@@ -1,6 +1,6 @@
 import DarkModeToggle from "@/components/DarkModeToggle";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -9,10 +9,13 @@ export const metadata = {
 };
 
 export default async function AuthLayout({ children }) {
-  const session = await getServerSession(authOptions);
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
-  if (session) {
-    return redirect("/");
+  const { data, error } = await supabase.auth.getUser();
+
+  if (data?.user && !error) {
+    redirect("/");
   }
 
   return (

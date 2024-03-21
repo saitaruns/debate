@@ -7,21 +7,48 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { useContext } from "react";
-import { AuthContext } from "../AuthContext";
-import { signOut } from "next-auth/react";
 import { LogOut, Settings, User } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function UserNav() {
-  const { name, email, image } = useContext(AuthContext);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const {
+    email = "dadas",
+    name = "default",
+    avatar_url: image = "",
+  } = user || {};
 
-  const handleLogout = () => {
-    signOut();
+  useEffect(() => {
+    const supabase = createClient();
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        // if (event === "SIGNED_OUT") {
+        //   router.push("/auth/login");
+        // }
+        console.log(event, session);
+        setUser(session?.user?.user_metadata);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [router]);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error logging out:", error);
+    }
+    router.push("/auth/login");
   };
 
   return (

@@ -1,8 +1,7 @@
-import AuthContextProvider from "@/components/AuthContext";
+import { cookies } from "next/headers";
 import "../globals.css";
 import Nav from "@/components/Nav";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -11,18 +10,19 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getServerSession(authOptions);
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
-  if (!session) {
-    return redirect("/auth/login");
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error || !data?.user) {
+    redirect("/auth/login");
   }
 
   return (
     <>
-      <AuthContextProvider value={session.user}>
-        <Nav />
-        {children}
-      </AuthContextProvider>
+      <Nav />
+      {children}
     </>
   );
 }
