@@ -35,6 +35,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { createClient } from "@/utils/supabase/client";
 
 const MAX_EVIDENCE = 5;
 const MAX_ARG_LENGTH = 500;
@@ -66,6 +67,8 @@ const FALLACIES = [
   { label: "Bandwagon Fallacy", value: "bandwagon-fallacy" },
 ];
 
+const supabase = createClient();
+
 const ArgumentForm = ({
   arg = {},
   closeDialog = () => {},
@@ -73,12 +76,14 @@ const ArgumentForm = ({
 }) => {
   const [textareaRows, setTextareaRows] = useState(1);
   const [argStrength, setArgStrength] = useState(0);
+  const [fallacies, setFallacies] = useState([]); // [1]
   const [ConfirmationDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to submit your argument"
   );
 
   const counterFormSchema = z.object({
+    ...(!isCounter ? { title: z.string().min(5) } : {}),
     arg: z
       .string()
       .min(
@@ -106,7 +111,7 @@ const ArgumentForm = ({
     ...(isCounter
       ? {
           fallacies: z
-            .array(z.string())
+            .array(z.number())
             .max(
               MAX_FALLACIES,
               `You can only select up to ${MAX_FALLACIES} fallacies`
@@ -118,6 +123,7 @@ const ArgumentForm = ({
   const counterForm = useForm({
     resolver: zodResolver(counterFormSchema),
     defaultValues: {
+      ...(!isCounter ? { title: "" } : {}),
       arg: "",
       evidence: [{ source: "" }],
       ...(isCounter ? { fallacies: [] } : {}),
@@ -169,20 +175,44 @@ const ArgumentForm = ({
     name: "evidence",
   });
 
+  const handlePost = async (data) => {
+    const {
+      data: [newArg],
+      error,
+    } = await supabase
+      .from("Argument")
+      .insert([
+        {
+          ...(!isCounter ? { title: data.title } : {}),
+          argument: data.arg,
+          evidence: data.evidence,
+          ...(isCounter ? { counter_to: arg.id } : {}),
+        },
+      ])
+      .select();
+
+    if (isCounter) {
+      await supabase
+        .from("ArgFallacyMap")
+        .insert(
+          data?.fallacies.map((f) => ({
+            arg_id: arg.id,
+            fallacy_id: f,
+          }))
+        )
+        .select();
+    }
+  };
+
   const onCounterArgumentSubmit = async (data) => {
     const ans = await confirm();
+
     if (ans) {
-      toast.promise(
-        () =>
-          new Promise((resolve) =>
-            setTimeout(() => resolve({ name: "Sonner" }), 2000)
-          ),
-        {
-          loading: "Posting your Argument",
-          success: "Argument posted",
-          error: "Failed to post your argument",
-        }
-      );
+      toast.promise(() => handlePost(data), {
+        loading: "Posting your Argument",
+        success: "Argument posted",
+        error: "Failed to post your argument",
+      });
       closeDialog();
     }
   };
@@ -196,6 +226,25 @@ const ArgumentForm = ({
       (evidence.length < MAX_EVIDENCE && LINK_REGEX.test(value))
     );
   };
+
+  useEffect(() => {
+    const getFallacies = async () => {
+      const { data: Fallacies, error } = await supabase
+        .from("Fallacies")
+        .select("*");
+
+      if (error) {
+        console.error(error);
+      } else {
+        const newFallacies = Fallacies.map((f) => {
+          return { label: f.name, value: f.id };
+        });
+        console.log(newFallacies);
+        setFallacies(newFallacies);
+      }
+    };
+    getFallacies();
+  }, []);
 
   return (
     <Form {...counterForm}>
@@ -214,6 +263,21 @@ const ArgumentForm = ({
             >
               {arg?.content}
             </ReadMore>
+            {!isCounter ? (
+              <FormField
+                control={counterForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="mx-1">
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <FormField
               control={counterForm.control}
               name="arg"
@@ -319,7 +383,7 @@ const ArgumentForm = ({
                     <FormControl>
                       <MultiSelectInput
                         {...field}
-                        options={FALLACIES}
+                        options={fallacies}
                         selectedValues={field.value}
                         maxSelected={MAX_FALLACIES}
                       />

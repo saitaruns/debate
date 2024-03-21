@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
@@ -22,18 +22,21 @@ import {
 } from "../ui/dropdown-menu";
 import ArgumentForm from "../Forms/ArgumentForm";
 import FancyNumber from "../Number";
-import { CgMailReply } from "react-icons/cg";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { LucideSword } from "lucide-react";
+import { formatDistance } from "date-fns";
+import { createClient } from "@/utils/supabase/client";
 
 const Dialogs = {
   counterFormDialog: "counterForm",
   reportFormDialog: "reportForm",
 };
 
+const supabase = createClient();
+
 const CounterCard = ({ arg }) => {
   const [voteState, setVoteState] = useState(0);
-  const [voteCount, setVoteCount] = useState(56);
+  const [voteCount, setVoteCount] = useState(arg.up_votes + arg.down_votes);
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState(null);
   const [ConfirmationDialog, confirm] = useConfirm(
@@ -108,23 +111,26 @@ const CounterCard = ({ arg }) => {
                   countering <span className="text-slate-700">@outsmart</span>
                 </div>
                 <ReadMore minLines={3} className="mb-3">
-                  {arg.content}
+                  {arg?.argument}
                 </ReadMore>
                 <ul>
-                  {arg.evidence.map((evidence) => (
-                    <li key={evidence.id}>
-                      <Link
-                        href={evidence.link}
-                        target="_blank"
-                        className="font-normal text-xs sm:text-sm w-fit text-blue-700 dark:text-blue-500 hover:underline hover:after:content-['_↗']"
-                      >
-                        <span>{evidence.description}</span>
-                      </Link>
-                    </li>
-                  ))}
+                  {arg?.evidence?.map((ev) => {
+                    const evidence = JSON.parse(ev);
+                    return (
+                      <li key={evidence.source}>
+                        <Link
+                          href={evidence.source}
+                          target="_blank"
+                          className="font-normal text-xs sm:text-sm w-fit text-blue-700 dark:text-blue-500 hover:underline hover:after:content-['_↗']"
+                        >
+                          <span>{evidence.source}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
                 <div className="mt-2">
-                  {arg.fallacies.map((fallacy) => (
+                  {arg?.fallacies?.map((fallacy) => (
                     <Badge
                       key={fallacy.id}
                       className="mr-1 cursor-pointer dark:bg-slate-400"
@@ -145,8 +151,12 @@ const CounterCard = ({ arg }) => {
                   <AvatarFallback className="text-[8px]">OM</AvatarFallback>
                 </Avatar>
                 <p className="text-xs font-medium leading-none">
-                  Sofia Davis{" "}
-                  <span className="font-normal">posted 5 days ago</span>
+                  {arg?.users?.data?.name}{" "}
+                  <span className="font-normal">
+                    {formatDistance(arg.created_at, new Date(), {
+                      addSuffix: true,
+                    })}
+                  </span>
                 </p>
               </div>
             </CardFooter>
