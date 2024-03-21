@@ -8,9 +8,11 @@ export default async function Argument({ params: { argId } }) {
   const supabase = createClient(cookies());
 
   let { data: args, error } = await supabase
-    .from("Argument")
+    .rpc("get_argument_rows", {
+      arg_id: argId,
+      n: 2,
+    })
     .select("*, users(*)")
-    .eq("related_to", argId)
     .order("level", { ascending: true })
     .order("created_at", { ascending: true });
 

@@ -263,7 +263,7 @@ const ArgumentForm = ({
               minLines={1}
               className="border-l-4 border-slate-700 p-2 bg-slate-300 dark:bg-slate-800 dark:border-slate-900"
             >
-              {arg?.content}
+              {arg?.argument}
             </ReadMore>
             {!isCounter && !isSupport ? (
               <FormField

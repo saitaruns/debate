@@ -149,7 +149,7 @@ const CounterCard = ({ arg }) => {
             <CardFooter className="flex justify-end mt-3">
               <div className="flex items-center space-x-2">
                 <Avatar className="w-6 h-6">
-                  <AvatarImage src="" />
+                  <AvatarImage src={arg?.users?.data?.avatar_url} />
                   <AvatarFallback className="text-[8px]">OM</AvatarFallback>
                 </Avatar>
                 <p className="text-xs font-medium leading-none">
