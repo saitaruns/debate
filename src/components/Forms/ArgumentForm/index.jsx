@@ -73,6 +73,7 @@ const ArgumentForm = ({
   arg = {},
   closeDialog = () => {},
   isCounter = false,
+  isSupport = false,
 }) => {
   const [textareaRows, setTextareaRows] = useState(1);
   const [argStrength, setArgStrength] = useState(0);
@@ -83,7 +84,7 @@ const ArgumentForm = ({
   );
 
   const counterFormSchema = z.object({
-    ...(!isCounter ? { title: z.string().min(5) } : {}),
+    ...(!isCounter && !isSupport ? { title: z.string().min(5) } : {}),
     arg: z
       .string()
       .min(
@@ -183,15 +184,16 @@ const ArgumentForm = ({
       .from("Argument")
       .insert([
         {
-          ...(!isCounter ? { title: data.title } : {}),
+          ...(!isCounter && !isSupport ? { title: data.title } : {}),
           argument: data.arg,
           evidence: data.evidence,
           ...(isCounter ? { counter_to: arg.id } : {}),
+          ...(isSupport ? { support_to: arg.id } : {}),
         },
       ])
       .select();
 
-    if (isCounter) {
+    if (isCounter && !error) {
       await supabase
         .from("ArgFallacyMap")
         .insert(
@@ -243,8 +245,8 @@ const ArgumentForm = ({
         setFallacies(newFallacies);
       }
     };
-    getFallacies();
-  }, []);
+    if (isCounter && !isSupport) getFallacies();
+  }, [isCounter, isSupport]);
 
   return (
     <Form {...counterForm}>
@@ -263,7 +265,7 @@ const ArgumentForm = ({
             >
               {arg?.content}
             </ReadMore>
-            {!isCounter ? (
+            {!isCounter && !isSupport ? (
               <FormField
                 control={counterForm.control}
                 name="title"

@@ -25,14 +25,12 @@ import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { LucideSword } from "lucide-react";
 import { formatDistance } from "date-fns";
-import { createClient } from "@/utils/supabase/client";
 
 const Dialogs = {
+  supportFormDialog: "supportForm",
   counterFormDialog: "counterForm",
   reportFormDialog: "reportForm",
 };
-
-const supabase = createClient();
 
 const CounterCard = ({ arg }) => {
   const [voteState, setVoteState] = useState(0);
@@ -81,6 +79,9 @@ const CounterCard = ({ arg }) => {
   };
 
   const Forms = {
+    supportForm: (
+      <ArgumentForm arg={arg} closeDialog={() => setOpen(false)} isSupport />
+    ),
     counterForm: (
       <ArgumentForm arg={arg} closeDialog={() => setOpen(false)} isCounter />
     ),
@@ -99,7 +100,8 @@ const CounterCard = ({ arg }) => {
                   className="cursor-pointer"
                   onClick={upVote}
                 />
-                <FancyNumber number={voteCount} className="text-sm" />
+                {/* <FancyNumber number={Number(voteCount)} className="text-sm" /> */}
+                <span>{voteCount}</span>
                 <FaAngleDown
                   size={24}
                   className="cursor-pointer"
@@ -163,9 +165,14 @@ const CounterCard = ({ arg }) => {
           </Card>
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer gap-2">
-                <FaShieldAlt size={16} /> Defend
-              </DropdownMenuItem>
+              <DialogTrigger
+                asChild
+                onClick={() => openDialog(Dialogs.supportFormDialog)}
+              >
+                <DropdownMenuItem className="cursor-pointer gap-2">
+                  <FaShieldAlt size={16} /> Defend
+                </DropdownMenuItem>
+              </DialogTrigger>
               <DialogTrigger
                 asChild
                 onClick={() => openDialog(Dialogs.counterFormDialog)}

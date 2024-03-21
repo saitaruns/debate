@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 function FancyNumber({ className, number: _num, children }) {
-  const number = _num || children;
+  const number = parseInt(_num, 10) || children;
 
   const numberArray = useMemo(() => {
     const arr = [];
