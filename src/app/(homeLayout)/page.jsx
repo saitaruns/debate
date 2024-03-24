@@ -11,25 +11,36 @@ import {
 import FancyNumber from "@/components/Number";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-import {
-  formatDistanceToNow,
-  formatDistanceToNowStrict,
-} from "date-fns";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 
 export default async function Home() {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  let { data: args, error } = await supabase
+  let {
+    data: args,
+    count,
+    error,
+  } = await supabase
     .from("Argument")
-    .select("*, users(*)")
+    .select("*, users(*)", {
+      count: "exact",
+    })
     .neq("title", null)
+    .range(0, 5)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching arguments", error);
+  }
+
+  console.log(args, count, error);
 
   return (
     <div className="flex m-3">
       <div className="w-0 sm:w-2/12" />
       <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3 space-y-2">
+        <p className="m-0 text-xs">{count} arguments</p>
         {args?.map((arg) => (
           <Card key={arg.id} className="w-full">
             <CardHeader className="p-3">
@@ -40,7 +51,7 @@ export default async function Home() {
               </Link>
               <CardDescription className="text-xs">
                 {arg?.up_votes} up votes | {arg?.down_votes} down votes |{" "}
-                {arg?.arguments} arguments
+                {arg?.count} arguments
               </CardDescription>
             </CardHeader>
             <CardContent className="p-3 pt-0">

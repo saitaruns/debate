@@ -5,27 +5,22 @@ import CounterCardList from "@/components/CounterCardList";
 export default async function Argument({ params: { argId } }) {
   const supabase = createClient(cookies());
 
-  let {
-    data: args,
-    count,
-    error,
-  } = await supabase
+  let { data: args, error } = await supabase
     .rpc("get_argument_rows", {
       arg_id: argId,
       n: 2,
     })
-    .select("*, users(*)")
     .order("level", { ascending: true })
     .order("created_at", { ascending: true });
 
-  console.log(args, count, error);
+  console.log(args, error);
 
   let { data: fallacies, error: fallaciesError } = await supabase
     .from("ArgFallacyMap")
     .select("*, Fallacies(*)")
     .in(
       "arg_id",
-      args.map((arg) => arg.id)
+      args?.map((arg) => arg.id)
     );
 
   args =

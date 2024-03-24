@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
@@ -147,7 +147,7 @@ const CounterCard = ({ arg, addToArgus }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
-        <Card layout id={`#counter_${arg.id}`} className="relative mb-1">
+        <Card className="relative mb-1">
           <CardContent className="flex p-3 pt-6 pb-0 items-start">
             <div className="flex flex-col pr-2 items-center">
               <FaAngleUp
@@ -251,11 +251,15 @@ const CounterCard = ({ arg, addToArgus }) => {
           <CardFooter className="flex justify-end mt-3">
             <div className="flex items-center space-x-2">
               <Avatar className="w-6 h-6">
-                <AvatarImage src={arg?.users?.data?.avatar_url} />
+                <AvatarImage
+                  src={
+                    arg?.user_data?.avatar_url || arg?.users?.data?.avatar_url
+                  }
+                />
                 <AvatarFallback className="text-[8px]">OM</AvatarFallback>
               </Avatar>
               <p className="text-xs font-medium leading-none">
-                {arg?.users?.data?.name}{" "}
+                {arg?.user_data?.name || arg?.users?.data?.name}{" "}
                 <span className="font-normal">
                   {formatDistance(arg.created_at, new Date(), {
                     addSuffix: true,
@@ -283,4 +287,8 @@ const CounterCard = ({ arg, addToArgus }) => {
   );
 };
 
-export default CounterCard;
+export default memo(
+  CounterCard,
+  (prevProps, nextProps) =>
+    JSON.stringify(prevProps) === JSON.stringify(nextProps)
+);

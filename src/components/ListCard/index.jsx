@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
 const ListCard = ({ children, className, maxHeight }) => {
@@ -17,6 +17,7 @@ const ListCard = ({ children, className, maxHeight }) => {
 
   useEffect(() => {
     if (ref.current) {
+      console.log(ref.current);
       const scrollHeight = ref.current.scrollHeight;
       ref.current.scrollTo({
         top: scrollHeight,
@@ -53,4 +54,4 @@ const ListCard = ({ children, className, maxHeight }) => {
   );
 };
 
-export default ListCard;
+export default memo(ListCard);
