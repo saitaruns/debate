@@ -74,6 +74,7 @@ const ArgumentForm = ({
   closeDialog = () => {},
   isCounter = false,
   isSupport = false,
+  addToArgus = () => {},
 }) => {
   const [textareaRows, setTextareaRows] = useState(1);
   const [argStrength, setArgStrength] = useState(0);
@@ -191,10 +192,13 @@ const ArgumentForm = ({
           ...(isSupport ? { support_to: arg.id } : {}),
         },
       ])
-      .select();
+      .select("*, users(*)");
 
+    console.log(newArg, error);
+
+    let fallacyData = [];
     if (isCounter && !error) {
-      await supabase
+      const { data: fData, error: fallacyError } = await supabase
         .from("ArgFallacyMap")
         .insert(
           data?.fallacies.map((f) => ({
@@ -202,8 +206,22 @@ const ArgumentForm = ({
             fallacy_id: f,
           }))
         )
-        .select();
+        .select("*, Fallacies(*)");
+
+      if (fallacyError) {
+        console.error(fallacyError);
+      } else {
+        console.log(fData);
+        fallacyData = fData;
+      }
     }
+
+    addToArgus({
+      arg: {
+        ...newArg,
+      },
+      fallacies: fallacyData,
+    });
   };
 
   const onCounterArgumentSubmit = async (data) => {

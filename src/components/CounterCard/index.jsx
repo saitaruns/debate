@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
@@ -25,6 +25,7 @@ import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { LucideSword } from "lucide-react";
 import { formatDistance } from "date-fns";
+import { DialogPortal } from "@radix-ui/react-dialog";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -32,7 +33,52 @@ const Dialogs = {
   reportFormDialog: "reportForm",
 };
 
-const CounterCard = ({ arg }) => {
+// Relevance Fallacies
+const relevanceFallacies = [
+  "Ad Hominem",
+  "Strawman",
+  "Red Herring",
+  "Tu Quoque",
+  "Appeal to Emotion",
+];
+
+// Presumption Fallacies
+const presumptionFallacies = [
+  "False Dilemma",
+  "False Cause",
+  "Begging the Question",
+];
+
+// Causal Fallacies
+const causalFallacies = [
+  "Slippery Slope",
+  "Post Hoc Ergo Propter Hoc",
+  "Hasty Generalization",
+];
+
+// Appeal Fallacies
+const appealFallacies = [
+  "Appeal to Authority",
+  "Appeal to Ignorance",
+  "Appeal to Nature",
+  "Appeal to Tradition",
+];
+
+// Structure Fallacies
+const structureFallacies = [
+  "Circular Reasoning",
+  "Composition and Division",
+  "Equivocation",
+];
+
+// Other Fallacies
+const otherFallacies = [
+  "No True Scotsman",
+  "Genetic Fallacy",
+  "Bandwagon Fallacy",
+];
+
+const CounterCard = ({ arg, addToArgus }) => {
   const [voteState, setVoteState] = useState(0);
   const [voteCount, setVoteCount] = useState(arg.up_votes + arg.down_votes);
   const [open, setOpen] = useState(false);
@@ -80,10 +126,20 @@ const CounterCard = ({ arg }) => {
 
   const Forms = {
     supportForm: (
-      <ArgumentForm arg={arg} closeDialog={() => setOpen(false)} isSupport />
+      <ArgumentForm
+        arg={arg}
+        closeDialog={() => setOpen(false)}
+        isSupport
+        addToArgus={addToArgus}
+      />
     ),
     counterForm: (
-      <ArgumentForm arg={arg} closeDialog={() => setOpen(false)} isCounter />
+      <ArgumentForm
+        arg={arg}
+        closeDialog={() => setOpen(false)}
+        isCounter
+        addToArgus={addToArgus}
+      />
     ),
     reportForm: <ReportForm closeDialog={() => setOpen(false)} />,
   };
@@ -91,117 +147,140 @@ const CounterCard = ({ arg }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
-        <DropdownMenu>
-          <Card className="relative mb-1">
-            <CardContent className="flex p-3 pt-6 pb-0 items-start">
-              <div className="flex flex-col pr-2 items-center">
-                <FaAngleUp
-                  size={24}
-                  className="cursor-pointer"
-                  onClick={upVote}
-                />
-                {/* <FancyNumber number={Number(voteCount)} className="text-sm" /> */}
-                <span>{voteCount}</span>
-                <FaAngleDown
-                  size={24}
-                  className="cursor-pointer"
-                  onClick={downVote}
-                />
+        <Card layout id={`#counter_${arg.id}`} className="relative mb-1">
+          <CardContent className="flex p-3 pt-6 pb-0 items-start">
+            <div className="flex flex-col pr-2 items-center">
+              <FaAngleUp
+                size={24}
+                className="cursor-pointer"
+                onClick={upVote}
+              />
+              {/* <FancyNumber number={Number(voteCount)} className="text-sm" /> */}
+              <span>{voteCount}</span>
+              <FaAngleDown
+                size={24}
+                className="cursor-pointer"
+                onClick={downVote}
+              />
+            </div>
+            <div className="flex flex-col flex-1">
+              <div className="text-xs text-slate-500">
+                countering <span className="text-slate-700">@outsmart</span>
               </div>
-              <div className="flex flex-col flex-1">
-                <div className="text-xs text-slate-500">
-                  countering <span className="text-slate-700">@outsmart</span>
-                </div>
-                <ReadMore minLines={3} className="mb-3">
-                  {arg?.argument}
-                </ReadMore>
-                <ul>
-                  {arg?.evidence?.map((ev) => {
-                    const evidence = JSON.parse(ev);
-                    return (
-                      <li key={evidence.source}>
-                        <Link
-                          href={evidence.source}
-                          target="_blank"
-                          className="font-normal text-xs sm:text-sm w-fit text-blue-700 dark:text-blue-500 hover:underline hover:after:content-['_↗']"
-                        >
-                          <span>{evidence.source}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <div className="mt-2">
-                  {arg?.fallacies?.map((fallacy) => (
-                    <Badge
-                      key={fallacy.id}
-                      className="mr-1 cursor-pointer dark:bg-slate-400"
+              <ReadMore minLines={3} className="mb-3">
+                {arg?.argument}
+              </ReadMore>
+              <ul className="w-32 sm:w-96">
+                {arg?.evidence?.map((ev) => {
+                  const evidence = JSON.parse(ev);
+                  return (
+                    <li
+                      key={evidence.source}
+                      className="truncate break-words w-full"
                     >
-                      {fallacy.name}
-                    </Badge>
-                  ))}
-                </div>
+                      <Link
+                        href={evidence.source}
+                        target="_blank"
+                        className="font-normal text-xs sm:text-sm  text-blue-700 dark:text-blue-500 hover:underline hover:after:content-['_↗']"
+                      >
+                        {evidence.source}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="mt-2">
+                {arg?.fallacies?.map((fallacy) => (
+                  <Badge
+                    key={fallacy.id}
+                    variant="outline"
+                    className={cn("mr-1 cursor-pointer dark:bg-slate-400", {
+                      "bg-red-100 text-red-600": relevanceFallacies.includes(
+                        fallacy.name
+                      ),
+                      "bg-yellow-100 text-yellow-600":
+                        presumptionFallacies.includes(fallacy.name),
+                      "bg-blue-100 text-blue-600": causalFallacies.includes(
+                        fallacy.name
+                      ),
+                      "bg-green-100 text-green-600": appealFallacies.includes(
+                        fallacy.name
+                      ),
+                      "bg-purple-100 text-purple-600":
+                        structureFallacies.includes(fallacy.name),
+                      "bg-gray-100 text-gray-600": otherFallacies.includes(
+                        fallacy.name
+                      ),
+                    })}
+                  >
+                    {fallacy.name}
+                  </Badge>
+                ))}
               </div>
+            </div>
+            <DropdownMenu>
               <DropdownMenuTrigger>
                 <HiDotsVertical className="" />
               </DropdownMenuTrigger>
-            </CardContent>
-            <CardFooter className="flex justify-end mt-3">
-              <div className="flex items-center space-x-2">
-                <Avatar className="w-6 h-6">
-                  <AvatarImage src={arg?.users?.data?.avatar_url} />
-                  <AvatarFallback className="text-[8px]">OM</AvatarFallback>
-                </Avatar>
-                <p className="text-xs font-medium leading-none">
-                  {arg?.users?.data?.name}{" "}
-                  <span className="font-normal">
-                    {formatDistance(arg.created_at, new Date(), {
-                      addSuffix: true,
-                    })}
-                  </span>
-                </p>
-              </div>
-            </CardFooter>
-          </Card>
-          <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuGroup>
-              <DialogTrigger
-                asChild
-                onClick={() => openDialog(Dialogs.supportFormDialog)}
-              >
-                <DropdownMenuItem className="cursor-pointer gap-2">
-                  <FaShieldAlt size={16} /> Defend
-                </DropdownMenuItem>
-              </DialogTrigger>
-              <DialogTrigger
-                asChild
-                onClick={() => openDialog(Dialogs.counterFormDialog)}
-              >
-                <DropdownMenuItem className="cursor-pointer gap-2">
-                  <LucideSword size={16} /> Counter
-                </DropdownMenuItem>
-              </DialogTrigger>
-              <DialogTrigger
-                asChild
-                onClick={() => openDialog(Dialogs.reportFormDialog)}
-              >
-                <DropdownMenuItem className="cursor-pointer text-red-600 gap-2">
-                  <MdOutlineReportProblem size={16} /> Report
-                </DropdownMenuItem>
-              </DialogTrigger>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DialogContent
-          onPointerDownOutside={(e) => {
-            e.preventDefault();
-          }}
-          className={cn(
-            dialog === Dialogs.counterFormDialog && "lg:min-w-[700px]"
-          )}
-        >
-          {Forms[dialog]}
-        </DialogContent>
+              <DropdownMenuContent side="bottom" align="end">
+                <DropdownMenuGroup>
+                  <DialogTrigger
+                    asChild
+                    onClick={() => openDialog(Dialogs.supportFormDialog)}
+                  >
+                    <DropdownMenuItem className="cursor-pointer gap-2">
+                      <FaShieldAlt size={16} /> Defend
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogTrigger
+                    asChild
+                    onClick={() => openDialog(Dialogs.counterFormDialog)}
+                  >
+                    <DropdownMenuItem className="cursor-pointer gap-2">
+                      <LucideSword size={16} /> Counter
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogTrigger
+                    asChild
+                    onClick={() => openDialog(Dialogs.reportFormDialog)}
+                  >
+                    <DropdownMenuItem className="cursor-pointer text-red-600 gap-2">
+                      <MdOutlineReportProblem size={16} /> Report
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardContent>
+          <CardFooter className="flex justify-end mt-3">
+            <div className="flex items-center space-x-2">
+              <Avatar className="w-6 h-6">
+                <AvatarImage src={arg?.users?.data?.avatar_url} />
+                <AvatarFallback className="text-[8px]">OM</AvatarFallback>
+              </Avatar>
+              <p className="text-xs font-medium leading-none">
+                {arg?.users?.data?.name}{" "}
+                <span className="font-normal">
+                  {formatDistance(arg.created_at, new Date(), {
+                    addSuffix: true,
+                  })}
+                </span>
+              </p>
+            </div>
+          </CardFooter>
+        </Card>
+        <DialogPortal forceMount>
+          <DialogContent
+            onPointerDownOutside={(e) => {
+              e.preventDefault();
+            }}
+            className={cn(
+              dialog === Dialogs.counterFormDialog && "lg:min-w-[700px]"
+            )}
+          >
+            {Forms[dialog]}
+          </DialogContent>
+        </DialogPortal>
       </Dialog>
       <ConfirmationDialog />
     </>

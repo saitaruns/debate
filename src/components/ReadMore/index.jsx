@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import React, { useState, useRef, useLayoutEffect } from "react";
 
-const ReadMore = ({ children: text, className, minLines = 3}) => {
+const ReadMore = ({ children: text, className, minLines = 3 }) => {
   const [overflown, setOverflown] = useState(false);
   const [isTruncated, setIsTruncated] = useState(true);
   const paragraphRef = useRef(null);
@@ -11,7 +11,9 @@ const ReadMore = ({ children: text, className, minLines = 3}) => {
   useLayoutEffect(() => {
     const paragraphElement = paragraphRef.current;
     if (paragraphElement) {
-      const lineHeight = parseInt(getComputedStyle(paragraphElement).lineHeight);
+      const lineHeight = parseInt(
+        getComputedStyle(paragraphElement).lineHeight
+      );
 
       const maxHeight = lineHeight * minLines;
 
@@ -25,15 +27,24 @@ const ReadMore = ({ children: text, className, minLines = 3}) => {
     setIsTruncated(!isTruncated);
   };
 
-  const pClass = clsx(isTruncated && `line-clamp-${minLines}`, "text-sm overflow-hidden");
+  const pClass = clsx(
+    isTruncated && `line-clamp-${minLines}`,
+    "text-sm overflow-hidden break-all w-full"
+  );
 
-  if(!text) return null
+  if (!text) return null;
 
   return (
     <div className={className}>
-      <p ref={paragraphRef} className={pClass}>{text}</p>
+      <p ref={paragraphRef} className={pClass}>
+        {text}
+      </p>
       {overflown && (
-        <button onClick={toggleTruncation} type="button" className="text-[14px] w-fit hover:underline font-medium">
+        <button
+          onClick={toggleTruncation}
+          type="button"
+          className="text-[14px] w-fit hover:underline font-medium"
+        >
           {isTruncated ? "Read more" : "Read less"}
         </button>
       )}

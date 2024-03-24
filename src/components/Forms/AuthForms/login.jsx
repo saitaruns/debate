@@ -36,6 +36,8 @@ export function LoginForm() {
     console.log(values);
   }
 
+  console.log(location.origin + "/auth/callback");
+
   async function handleGoogleLogin() {
     const supabase = createClient();
     supabase.auth.signInWithOAuth({
