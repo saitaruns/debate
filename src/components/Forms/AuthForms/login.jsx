@@ -36,14 +36,12 @@ export function LoginForm() {
     console.log(values);
   }
 
-  console.log(location.origin + "/auth/callback");
-
   async function handleGoogleLogin() {
     const supabase = createClient();
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: location.origin + "/auth/callback",
+        redirectTo: process.env.NEXT_PUBLIC_HOST + "/auth/callback",
       },
     });
   }
