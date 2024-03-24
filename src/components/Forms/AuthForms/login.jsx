@@ -41,7 +41,7 @@ export function LoginForm() {
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_HOST + "/auth/callback",
+        redirectTo: location.origin + "/auth/callback",
       },
     });
   }

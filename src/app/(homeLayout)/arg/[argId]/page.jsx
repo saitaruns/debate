@@ -1,6 +1,3 @@
-import clsx from "clsx";
-import ListCard from "@/components/ListCard";
-import CounterCard from "@/components/CounterCard";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import CounterCardList from "@/components/CounterCardList";

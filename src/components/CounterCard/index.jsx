@@ -195,22 +195,18 @@ const CounterCard = ({ arg, addToArgus }) => {
                     key={fallacy.id}
                     variant="outline"
                     className={cn("mr-1 cursor-pointer dark:bg-slate-400", {
-                      "bg-red-100 text-red-600": relevanceFallacies.includes(
-                        fallacy.name
-                      ),
-                      "bg-yellow-100 text-yellow-600":
+                      "bg-red-100 text-red-600 dark:bg-red-600 dark:text-red-100":
+                        relevanceFallacies.includes(fallacy.name),
+                      "bg-yellow-100 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100":
                         presumptionFallacies.includes(fallacy.name),
-                      "bg-blue-100 text-blue-600": causalFallacies.includes(
-                        fallacy.name
-                      ),
-                      "bg-green-100 text-green-600": appealFallacies.includes(
-                        fallacy.name
-                      ),
-                      "bg-purple-100 text-purple-600":
+                      "bg-blue-100 text-blue-600 dark:bg-blue-600 dark:text-blue-100":
+                        causalFallacies.includes(fallacy.name),
+                      "bg-green-100 text-green-600 dark:bg-green-600 dark:text-green-100":
+                        appealFallacies.includes(fallacy.name),
+                      "bg-purple-100 text-purple-600 dark:bg-purple-600 dark:text-purple-100":
                         structureFallacies.includes(fallacy.name),
-                      "bg-gray-100 text-gray-600": otherFallacies.includes(
-                        fallacy.name
-                      ),
+                      "bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-100":
+                        otherFallacies.includes(fallacy.name),
                     })}
                   >
                     {fallacy.name}
