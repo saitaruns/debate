@@ -17,7 +17,6 @@ const ListCard = ({ children, className, maxHeight }) => {
 
   useEffect(() => {
     if (ref.current) {
-      console.log(ref.current);
       const scrollHeight = ref.current.scrollHeight;
       ref.current.scrollTo({
         top: scrollHeight,

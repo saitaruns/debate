@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
@@ -26,6 +26,8 @@ import { MdOutlineReportProblem } from "react-icons/md";
 import { LucideSword } from "lucide-react";
 import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
+import { createClient } from "@/utils/supabase/client";
+import { AuthContext } from "../AuthContext";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -78,9 +80,13 @@ const otherFallacies = [
   "Bandwagon Fallacy",
 ];
 
+const supabase = createClient();
+
 const CounterCard = ({ arg, addToArgus }) => {
-  const [voteState, setVoteState] = useState(0);
-  const [voteCount, setVoteCount] = useState(arg.up_votes + arg.down_votes);
+  const [voteState, setVoteState] = useState(
+    arg?.voted === "upvoted" ? 1 : arg?.voted === "downvoted" ? -1 : 0
+  );
+  const [voteCount, setVoteCount] = useState(arg.up_votes - arg.down_votes);
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState(null);
   const [ConfirmationDialog, confirm] = useConfirm(
@@ -89,19 +95,83 @@ const CounterCard = ({ arg, addToArgus }) => {
     "Close"
   );
 
+  const handleVote = async (vote) => {
+    const { data, error } = await supabase
+      .from("ArgVoteUserMap")
+      .upsert({
+        arg_id: arg.id,
+        type: vote,
+      })
+      .select();
+
+    if (error) {
+      console.error("Error updating argument", error);
+    }
+  };
+
   const upVote = () => {
-    if (voteState !== 1) {
-      setVoteState((prev) => prev + 1);
+    if (voteState === 0) {
+      setVoteState(1);
       setVoteCount(voteCount + 1);
-      toast("You have upvoted this argument", { type: "success" });
+      // toast("You have upvoted this argument", { type: "success" });
+      toast.promise(() => handleVote("upvote"), {
+        loading: "Upvoting...",
+        success: "You have upvoted this argument",
+        error: "Error upvoting argument",
+      });
+    }
+    if (voteState === 1) {
+      setVoteState(0);
+      setVoteCount(voteCount - 1);
+      // toast("You have removed your upvote", { type: "success" });
+      toast.promise(() => handleVote("novote"), {
+        loading: "Removing upvote...",
+        success: "You have removed your upvote",
+        error: "Error removing upvote",
+      });
+    }
+    if (voteState === -1) {
+      setVoteState(1);
+      setVoteCount(voteCount + 2);
+      // toast("You have upvoted this argument", { type: "success" });
+      toast.promise(() => handleVote("upvote"), {
+        loading: "Upvoting...",
+        success: "You have upvoted this argument",
+        error: "Error upvoting argument",
+      });
     }
   };
 
   const downVote = () => {
-    if (voteState !== -1) {
-      setVoteState((prev) => prev - 1);
+    if (voteState === 0) {
+      setVoteState(-1);
       setVoteCount(voteCount - 1);
-      toast("You have downvoted this argument", { type: "success" });
+      // toast("You have downvoted this argument", { type: "success" });
+      toast.promise(() => handleVote("downvote"), {
+        loading: "Downvoting...",
+        success: "You have downvoted this argument",
+        error: "Error downvoting argument",
+      });
+    }
+    if (voteState === -1) {
+      setVoteState(0);
+      setVoteCount(voteCount + 1);
+      // toast("You have removed your downvote", { type: "success" });
+      toast.promise(() => handleVote("novote"), {
+        loading: "Removing downvote...",
+        success: "You have removed your downvote",
+        error: "Error removing downvote",
+      });
+    }
+    if (voteState === 1) {
+      setVoteState(-1);
+      setVoteCount(voteCount - 2);
+      // toast("You have downvoted this argument", { type: "success" });
+      toast.promise(() => handleVote("downvote"), {
+        loading: "Downvoting...",
+        success: "You have downvoted this argument",
+        error: "Error downvoting argument",
+      });
     }
   };
 
@@ -152,14 +222,18 @@ const CounterCard = ({ arg, addToArgus }) => {
             <div className="flex flex-col pr-2 items-center">
               <FaAngleUp
                 size={24}
-                className="cursor-pointer"
+                className={cn("cursor-pointer", {
+                  "text-green-500": voteState === 1,
+                })}
                 onClick={upVote}
               />
               {/* <FancyNumber number={Number(voteCount)} className="text-sm" /> */}
               <span>{voteCount}</span>
               <FaAngleDown
                 size={24}
-                className="cursor-pointer"
+                className={cn("cursor-pointer", {
+                  "text-red-500": voteState === -1,
+                })}
                 onClick={downVote}
               />
             </div>

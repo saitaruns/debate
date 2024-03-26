@@ -5,15 +5,10 @@ import CounterCardList from "@/components/CounterCardList";
 export default async function Argument({ params: { argId } }) {
   const supabase = createClient(cookies());
 
-  let { data: args, error } = await supabase
-    .rpc("get_argument_rows", {
-      arg_id: argId,
-      n: 2,
-    })
-    .order("level", { ascending: true })
-    .order("created_at", { ascending: true });
-
-  console.log(args, error);
+  let { data: args, error } = await supabase.rpc("get_argument_rows", {
+    a_id: argId,
+    n: 2,
+  });
 
   let { data: fallacies, error: fallaciesError } = await supabase
     .from("ArgFallacyMap")
@@ -36,14 +31,12 @@ export default async function Argument({ params: { argId } }) {
       return arg;
     }) || [];
 
-  const argus = [...args];
-
   return (
     <>
       <div className="text-xl font-normal my-5 flex">
-        <h1 className="flex-1">{argus[0].title}</h1>
+        <h1 className="flex-1">{args[0].title}</h1>
       </div>
-      <CounterCardList argus={argus} />
+      <CounterCardList argus={args} />
     </>
   );
 }

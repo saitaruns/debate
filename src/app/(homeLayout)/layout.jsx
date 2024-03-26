@@ -3,6 +3,7 @@ import "../globals.css";
 import Nav from "@/components/Nav";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import AuthContextProvider from "@/components/AuthContext";
 
 export const metadata = {
   title: "Debate",
@@ -20,9 +21,9 @@ export default async function RootLayout({ children }) {
   }
 
   return (
-    <>
+    <AuthContextProvider value={data?.user || {}}>
       <Nav />
       {children}
-    </>
+    </AuthContextProvider>
   );
 }

@@ -37,18 +37,19 @@ const CounterCardList = ({ argus: args }) => {
     });
   }, []);
 
-  console.log(argus);
-
   const getMoreArgs = useCallback(
     async ({ argLevel, page, setLoading }) => {
       setLoading(true);
       const { data: newArgs, error } = await supabase
-        .from("Argument")
-        .select("*, users(*)")
-        .eq("related_to", args[0].id)
+        .rpc("get_argument_rows", {
+          a_id: args[0].id,
+          n: null,
+        })
         .eq("level", argLevel)
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
         .order("created_at", { ascending: true });
+
+      console.log(newArgs);
 
       if (error) {
         console.error("Error fetching arguments", error);
