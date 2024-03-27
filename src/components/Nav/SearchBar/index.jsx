@@ -13,19 +13,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOnClickOutside } from "usehooks-ts";
 import { createClient } from "@/utils/supabase/client";
+import { SearchIcon } from "lucide-react";
 
 const supabase = createClient();
 const SearchBar = () => {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
-  const searchRef = useRef(null);
-  useOnClickOutside(searchRef, () => {
-    setItems([]);
-  });
 
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState([]);
   const [search, setSearch] = useState(searchParams.get("query") || "");
+  const [items, setItems] = useState([]);
+  const [sugOpen, setSugOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const searchRef = useRef(null);
+  useOnClickOutside(searchRef, () => {
+    setSugOpen(false);
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -36,23 +40,33 @@ const SearchBar = () => {
     }
   }, [searchParams]);
 
-  const fetchItems = async () => {
+  useEffect(() => {
+    if (isTyping) {
+      setSugOpen(true);
+      setItems([]);
+    }
+  }, [isTyping]);
+
+  const fetchItems = async (query) => {
     setLoading(true);
-    setItems([]);
     const { data, error } = await supabase
       .from("Argument")
       .select("title")
-      .ilike("title", `%${search}%`)
+      .ilike("title", `%${query}%`)
       .limit(5);
     setLoading(false);
     if (error) {
       console.error("Error fetching search suggestions", error);
     } else {
-      setItems(data.map((item) => ({ label: item.title, value: item.title })));
+      setItems([
+        ...data.map((item) => ({
+          label: item.title,
+          value: item.title,
+        })),
+      ]);
     }
   };
 
-  // Debounce function
   const debounce = (func, delay) => {
     let timeoutId;
     return (...args) => {
@@ -61,7 +75,13 @@ const SearchBar = () => {
     };
   };
 
-  const fetchItemsDebounced = useCallback(debounce(fetchItems, 300), []);
+  const fetchItemsDebounced = useCallback(
+    debounce((query) => {
+      fetchItems(query);
+      setIsTyping(false);
+    }, 300),
+    []
+  );
 
   function handleSearch(term) {
     const params = new URLSearchParams(searchParams);
@@ -75,57 +95,68 @@ const SearchBar = () => {
     replace(`${location.origin}?${params.toString()}`);
   }
 
+  const handleSelect = (value) => {
+    setSugOpen(false);
+    setSearch(value);
+    handleSearch(value);
+  };
+
   return (
     <Command loop className="border bg-transparent " ref={searchRef}>
       <CommandInput
-        placeholder="Search framework..."
+        placeholder="Search"
         className="h-9"
         value={search}
         onValueChange={(value) => {
           setSearch(value);
+          setIsTyping(true);
           if (value.length > 0) {
-            fetchItemsDebounced();
-          } else {
-            setItems([]);
+            fetchItemsDebounced(value);
           }
         }}
+        onFocus={() => setSugOpen(true)}
       />
       <CommandList
         className={cn(
           "absolute top-full bg-background w-full border shadow-md",
           {
-            hidden: !loading && !items.length,
+            hidden: !sugOpen || search.length === 0,
           }
         )}
       >
-        {!loading && <CommandEmpty>No results found.</CommandEmpty>}
-        {loading && (
-          <CommandLoading className="w-full bg-background">
-            {Array.from({ length: 3 }).map((_, index) => {
-              return <Skeleton key={index} className=" h-6 my-2 mx-1" />;
-            })}
-          </CommandLoading>
-        )}
-        <CommandGroup>
+        <CommandGroup
+          className={cn("p-0", {
+            hidden: search.length === 0,
+          })}
+        >
           <CommandItem
+            className="px-3"
             key={search}
             value={search}
-            onSelect={(currentValue) => {
-              setItems([]);
-              handleSearch(currentValue);
-            }}
+            onSelect={handleSelect}
           >
+            <SearchIcon className="size-3 mr-2 text-slate-400" />
             Search for: {search}
           </CommandItem>
+        </CommandGroup>
+        {(isTyping || loading) && (
+          <CommandLoading>
+            <div className="space-y-1 py-1">
+              <Skeleton className={cn("h-5 mx-1 rounded-full w-9/12")} />
+              <Skeleton className={cn("h-5 mx-1 rounded-full w-8/12")} />
+              <Skeleton className={cn("h-5 mx-1 rounded-full w-11/12")} />
+            </div>
+          </CommandLoading>
+        )}
+        <CommandGroup className="p-0" heading="Suggestions">
           {items.map((item) => (
             <CommandItem
               key={item.value}
               value={item.value}
-              onSelect={(currentValue) => {
-                setItems([]);
-                handleSearch(currentValue);
-              }}
+              onSelect={handleSelect}
+              className="px-3"
             >
+              <SearchIcon className="size-3 mr-2 text-slate-400" />
               {item.label}
             </CommandItem>
           ))}
