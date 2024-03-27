@@ -118,15 +118,17 @@ export default async function Home({ searchParams }) {
                 </div>
                 <Link
                   href={`/profile/${arg?.user_id}`}
-                  className="flex items-center space-x-1"
+                  className="flex items-center space-x-1 group"
                 >
                   <Avatar className="w-4 h-4">
                     <AvatarImage src={arg?.users?.data?.avatar_url} />
                     <AvatarFallback className="text-[6px]">OM</AvatarFallback>
                   </Avatar>
-                  <p className="text-xs font-medium leading-none">
-                    {arg?.users?.data?.name}{" "}
-                    <span className="font-normal hidden sm:inline">
+                  <p className="text-xs font-medium space-x-1 leading-none">
+                    <span className="group-hover:underline">
+                      {arg?.users?.data?.name}
+                    </span>
+                    <span className="font-normal hidden sm:inline group-hover:underline">
                       {formatDistanceToNow(arg.created_at, {
                         addSuffix: true,
                       })}
