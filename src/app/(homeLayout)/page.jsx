@@ -88,7 +88,7 @@ export default async function Home({ searchParams }) {
         <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3 space-y-2">
           <p className="m-0 text-xs">{count} argument(s)</p>
           {args?.map((arg) => (
-            <Card key={arg.id} className="w-full">
+            <Card key={arg.id} className="w-full shadow-md">
               <CardHeader className="p-3">
                 <Link href={`/arg/${arg.id}`} className="hover:underline">
                   <CardTitle className="text-md font-medium truncate">
@@ -116,7 +116,10 @@ export default async function Home({ searchParams }) {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1">
+                <Link
+                  href={`/profile/${arg?.user_id}`}
+                  className="flex items-center space-x-1"
+                >
                   <Avatar className="w-4 h-4">
                     <AvatarImage src={arg?.users?.data?.avatar_url} />
                     <AvatarFallback className="text-[6px]">OM</AvatarFallback>
@@ -132,7 +135,7 @@ export default async function Home({ searchParams }) {
                       {formatDistanceToNowStrict(arg.created_at, {})}
                     </span>
                   </p>
-                </div>
+                </Link>
               </CardFooter>
             </Card>
           ))}

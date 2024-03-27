@@ -125,7 +125,7 @@ const SearchBar = () => {
         )}
       >
         <CommandGroup
-          className={cn("p-0", {
+          className={cn("p-1 rounded-3xl", {
             hidden: search.length === 0,
           })}
         >

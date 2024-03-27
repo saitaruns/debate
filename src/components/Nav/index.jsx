@@ -46,7 +46,7 @@ const Nav = () => {
       <nav
         className={clsx(
           "sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex py-3 items-center transition-all",
-          scrollState && "shadow-lg"
+          scrollState && "shadow-md"
         )}
       >
         <Link href="/" className="w-fit sm:w-2/12 text-right p-2">

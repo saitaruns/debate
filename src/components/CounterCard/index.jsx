@@ -28,57 +28,20 @@ import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
 import { AuthContext } from "../AuthContext";
+import {
+  appealFallacies,
+  causalFallacies,
+  otherFallacies,
+  presumptionFallacies,
+  relevanceFallacies,
+  structureFallacies,
+} from "../../constants";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
   counterFormDialog: "counterForm",
   reportFormDialog: "reportForm",
 };
-
-// Relevance Fallacies
-const relevanceFallacies = [
-  "Ad Hominem",
-  "Strawman",
-  "Red Herring",
-  "Tu Quoque",
-  "Appeal to Emotion",
-];
-
-// Presumption Fallacies
-const presumptionFallacies = [
-  "False Dilemma",
-  "False Cause",
-  "Begging the Question",
-];
-
-// Causal Fallacies
-const causalFallacies = [
-  "Slippery Slope",
-  "Post Hoc Ergo Propter Hoc",
-  "Hasty Generalization",
-];
-
-// Appeal Fallacies
-const appealFallacies = [
-  "Appeal to Authority",
-  "Appeal to Ignorance",
-  "Appeal to Nature",
-  "Appeal to Tradition",
-];
-
-// Structure Fallacies
-const structureFallacies = [
-  "Circular Reasoning",
-  "Composition and Division",
-  "Equivocation",
-];
-
-// Other Fallacies
-const otherFallacies = [
-  "No True Scotsman",
-  "Genetic Fallacy",
-  "Bandwagon Fallacy",
-];
 
 const supabase = createClient();
 
@@ -108,6 +71,8 @@ const CounterCard = ({ arg, addToArgus }) => {
       console.error("Error updating argument", error);
     }
   };
+
+  console.log(arg);
 
   const upVote = () => {
     if (voteState === 0) {
@@ -323,7 +288,10 @@ const CounterCard = ({ arg, addToArgus }) => {
             </DropdownMenu>
           </CardContent>
           <CardFooter className="flex justify-end mt-3">
-            <div className="flex items-center space-x-2">
+            <Link
+              href={`/profile/${arg?.user_id}`}
+              className="flex items-center space-x-2"
+            >
               <Avatar className="w-6 h-6">
                 <AvatarImage
                   src={
@@ -340,7 +308,7 @@ const CounterCard = ({ arg, addToArgus }) => {
                   })}
                 </span>
               </p>
-            </div>
+            </Link>
           </CardFooter>
         </Card>
         <DialogPortal forceMount>

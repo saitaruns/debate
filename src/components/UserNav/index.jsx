@@ -70,7 +70,10 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => router.push("/profile/me")}
+          >
             <User size={16} className="mr-2" />
             Profile
           </DropdownMenuItem>
