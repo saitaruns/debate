@@ -35,6 +35,7 @@ import {
   presumptionFallacies,
   relevanceFallacies,
   structureFallacies,
+  variantReturner,
 } from "../../constants";
 
 const Dialogs = {
@@ -232,21 +233,8 @@ const CounterCard = ({ arg, addToArgus }) => {
                 {arg?.fallacies?.map((fallacy) => (
                   <Badge
                     key={fallacy.id}
-                    variant="outline"
-                    className={cn("mr-1 cursor-pointer dark:bg-slate-400", {
-                      "bg-red-100 text-red-600 dark:bg-red-600 dark:text-red-100":
-                        relevanceFallacies.includes(fallacy.name),
-                      "bg-yellow-100 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100":
-                        presumptionFallacies.includes(fallacy.name),
-                      "bg-blue-100 text-blue-600 dark:bg-blue-600 dark:text-blue-100":
-                        causalFallacies.includes(fallacy.name),
-                      "bg-green-100 text-green-600 dark:bg-green-600 dark:text-green-100":
-                        appealFallacies.includes(fallacy.name),
-                      "bg-purple-100 text-purple-600 dark:bg-purple-600 dark:text-purple-100":
-                        structureFallacies.includes(fallacy.name),
-                      "bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-100":
-                        otherFallacies.includes(fallacy.name),
-                    })}
+                    variant={variantReturner(fallacy.name)}
+                    className="m-1 cursor-pointer"
                   >
                     {fallacy.name}
                   </Badge>

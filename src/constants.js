@@ -42,6 +42,25 @@ const otherFallacies = [
   "Bandwagon Fallacy",
 ];
 
+// Variant Returner
+function variantReturner(fallacyName) {
+  if (relevanceFallacies.includes(fallacyName)) {
+    return "relevance";
+  } else if (presumptionFallacies.includes(fallacyName)) {
+    return "presumption";
+  } else if (causalFallacies.includes(fallacyName)) {
+    return "causal";
+  } else if (appealFallacies.includes(fallacyName)) {
+    return "appeal";
+  } else if (structureFallacies.includes(fallacyName)) {
+    return "structure";
+  } else if (otherFallacies.includes(fallacyName)) {
+    return "other";
+  } else {
+    return "unknown";
+  }
+}
+
 export {
   relevanceFallacies,
   presumptionFallacies,
@@ -49,4 +68,5 @@ export {
   appealFallacies,
   structureFallacies,
   otherFallacies,
+  variantReturner,
 };
