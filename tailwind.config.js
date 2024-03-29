@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{js,jsx}',
-    './components/**/*.{js,jsx}',
-    './app/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -75,8 +75,8 @@ module.exports = {
   },
   safelist: [
     {
-      pattern: /line-clamp-[1-5]/
-    }
+      pattern: /line-clamp-[1-5]/,
+    },
   ],
   plugins: [require("tailwindcss-animate")],
-}
+};

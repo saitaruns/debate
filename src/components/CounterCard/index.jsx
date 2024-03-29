@@ -29,12 +29,6 @@ import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
 import { AuthContext } from "../AuthContext";
 import {
-  appealFallacies,
-  causalFallacies,
-  otherFallacies,
-  presumptionFallacies,
-  relevanceFallacies,
-  structureFallacies,
   variantReturner,
 } from "../../constants";
 
@@ -183,7 +177,7 @@ const CounterCard = ({ arg, addToArgus }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
-        <Card className="relative mb-1">
+        <Card className="relative mb-1" id={`arg_${arg.id}`}>
           <CardContent className="flex p-3 pt-6 pb-0 items-start">
             <div className="flex flex-col pr-2 items-center">
               <FaAngleUp
@@ -278,7 +272,7 @@ const CounterCard = ({ arg, addToArgus }) => {
           <CardFooter className="flex justify-end mt-3">
             <Link
               href={`/profile/${arg?.user_id}`}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 group"
             >
               <Avatar className="w-6 h-6">
                 <AvatarImage
@@ -288,9 +282,11 @@ const CounterCard = ({ arg, addToArgus }) => {
                 />
                 <AvatarFallback className="text-[8px]">OM</AvatarFallback>
               </Avatar>
-              <p className="text-xs font-medium leading-none">
-                {arg?.user_data?.name || arg?.users?.data?.name}{" "}
-                <span className="font-normal">
+              <p className="text-xs font-medium leading-none space-x-1">
+                <span className="group-hover:underline">
+                  {arg?.user_data?.name || arg?.users?.data?.name}
+                </span>
+                <span className="font-normal group-hover:underline">
                   {formatDistance(arg.created_at, new Date(), {
                     addSuffix: true,
                   })}

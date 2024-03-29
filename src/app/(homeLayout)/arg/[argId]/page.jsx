@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import CounterCardList from "@/components/CounterCardList";
+import Link from "next/link";
 
 export default async function Argument({ params: { argId } }) {
   const supabase = createClient(cookies());
@@ -36,6 +37,7 @@ export default async function Argument({ params: { argId } }) {
       <div className="text-xl font-normal my-5 flex">
         <h1 className="flex-1">{args[0].title}</h1>
       </div>
+      <Link href={`#arg_${args[6].id}`}>Edit</Link>
       <CounterCardList argus={args} />
     </>
   );

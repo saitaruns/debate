@@ -117,7 +117,7 @@ const GetCard = memo(
           {argus.length}/{levelCount} arguments
         </p>
         <ListCard
-          className="w-11/12 sm:w-10/12 md:w-8/12 overflow-auto"
+          className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto"
           maxHeight="600px"
         >
           {argus.map((arg) => (

@@ -198,12 +198,12 @@ const Profile = async ({ params: { profileId } }) => {
               </Card>
             ))}
           </div>
-          <div className="sm:w-10/12 space-y-3">
+          <div className="sm:w-9/12 space-y-3">
             <Card>
               <CardHeader className="p-4">
-                <CardTitle className="text-xl">
-                  Top Fallacies tagged
-                  {/* <ShieldAlert className="h-4 w-4 text-muted-foreground" /> */}
+                <CardTitle className="text-xl flex justify-between items-center">
+                  <span>Top Fallacies tagged</span>
+                  <ShieldAlert className="h-4 w-4 text-muted-foreground" />
                 </CardTitle>
                 <CardDescription className="">
                   Most common fallacies
@@ -261,8 +261,7 @@ const Profile = async ({ params: { profileId } }) => {
                           <TableRow key={arg.id} className="">
                             <TableCell className="line-clamp-1 overflow-hidden">
                               <Link href={`/arg/${arg.id}`}>
-                                {/* {arg?.title} */}
-                                kjgk
+                                {arg?.title.slice(0, 14)}
                               </Link>
                             </TableCell>
                             <TableCell className="">

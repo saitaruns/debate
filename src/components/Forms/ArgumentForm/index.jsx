@@ -192,7 +192,7 @@ const ArgumentForm = ({
           ...(isSupport ? { support_to: arg.id } : {}),
         },
       ])
-      .select("*, users(*)");
+      .select("*, users!public_Argument_user_id_fkey(*)");
 
     console.log(newArg, error);
 
