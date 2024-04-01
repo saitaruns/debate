@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -11,9 +10,9 @@ import { cn } from "@/lib/utils";
 import { CommandLoading } from "cmdk";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useOnClickOutside } from "usehooks-ts";
 import { createClient } from "@/utils/supabase/client";
 import { SearchIcon } from "lucide-react";
+import { useClickAway } from "@uidotdev/usehooks";
 
 const supabase = createClient();
 const SearchBar = () => {
@@ -26,8 +25,7 @@ const SearchBar = () => {
   const [sugOpen, setSugOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
-  const searchRef = useRef(null);
-  useOnClickOutside(searchRef, () => {
+  const searchRef = useClickAway(() => {
     setSugOpen(false);
   });
 
@@ -102,7 +100,7 @@ const SearchBar = () => {
   };
 
   return (
-    <Command loop className="border bg-transparent " ref={searchRef}>
+    <Command loop className="border bg-transparent" ref={searchRef}>
       <CommandInput
         placeholder="Search"
         className="h-9"
@@ -119,6 +117,7 @@ const SearchBar = () => {
       <CommandList
         className={cn(
           "absolute top-full bg-background w-full border shadow-md",
+          "border border-border/40 bg-background/95 backdrop-blur ",
           {
             hidden: !sugOpen || search.length === 0,
           }
@@ -141,7 +140,7 @@ const SearchBar = () => {
         </CommandGroup>
         {(isTyping || loading) && (
           <CommandLoading>
-            <div className="space-y-1 py-1">
+            <div className="space-y-2 py-1">
               <Skeleton className={cn("h-5 mx-1 rounded-full w-9/12")} />
               <Skeleton className={cn("h-5 mx-1 rounded-full w-8/12")} />
               <Skeleton className={cn("h-5 mx-1 rounded-full w-11/12")} />

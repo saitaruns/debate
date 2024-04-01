@@ -16,8 +16,8 @@ import { BiPlusCircle } from "react-icons/bi";
 import { FaCheck } from "react-icons/fa";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { useMediaQuery } from "usehooks-ts";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 const MultiSelectInput = React.forwardRef(
   ({ options, selectedValues, onChange, maxSelected, props }, ref) => {

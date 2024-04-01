@@ -59,7 +59,7 @@ const Profile = async ({ params: { profileId } }) => {
       { count: "exact" }
     )
     .eq("user_id", profileId)
-    .neq("title", null)
+    // .neq("title", null)
     .order("created_at", { ascending: false })
     .range(0, 2)
     .then((res) => {
@@ -259,9 +259,12 @@ const Profile = async ({ params: { profileId } }) => {
                       <TableBody>
                         {data?.map((arg) => (
                           <TableRow key={arg.id} className="">
-                            <TableCell className="line-clamp-1 overflow-hidden">
-                              <Link href={`/arg/${arg.id}`}>
-                                {arg?.title.slice(0, 14)}
+                            <TableCell>
+                              <Link
+                                className="line-clamp-1 overflow-hidden"
+                                href={`/arg/${arg.id}`}
+                              >
+                                {arg?.title?.slice(0, 14) || arg?.argument}
                               </Link>
                             </TableCell>
                             <TableCell className="">

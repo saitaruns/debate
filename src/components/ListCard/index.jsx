@@ -6,7 +6,7 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
-const ListCard = ({ children, className, maxHeight }) => {
+const ListCard = ({ children, className }) => {
   const ref = useRef(null);
   const [scrollState, setScrollState] = useState(0);
   const [isShadow, setIsShadow] = useState(false);
@@ -18,12 +18,13 @@ const ListCard = ({ children, className, maxHeight }) => {
   useEffect(() => {
     if (ref.current) {
       const scrollHeight = ref.current.scrollHeight;
+      const offsetHeight = ref.current.offsetHeight;
       ref.current.scrollTo({
         top: scrollHeight,
         behavior: "smooth",
       });
+      setIsShadow(scrollHeight > offsetHeight);
     }
-    setIsShadow(React.Children.count(children) > 3);
   }, [children]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -32,11 +33,7 @@ const ListCard = ({ children, className, maxHeight }) => {
 
   return (
     <ScrollArea className={cn(className, "relative")}>
-      <div
-        ref={ref}
-        className="overflow-y-auto flex flex-col"
-        style={{ maxHeight }}
-      >
+      <div ref={ref} className="overflow-y-auto flex flex-col max-h-[500px]">
         {children}
       </div>
       <div

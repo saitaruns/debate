@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import ListCard from "../ListCard";
 import CounterCard from "../CounterCard";
 import clsx from "clsx";
@@ -28,7 +28,12 @@ const CounterCardList = ({ argus: args }) => {
               fallacies: [
                 ...(a?.fallacies || []),
                 ...(fallacies?.map((fallacy) => fallacy.Fallacies) || []),
-              ],
+              ].reduce((acc, fallacy) => {
+                if (acc.find((f) => f.id === fallacy.id)) {
+                  return acc;
+                }
+                return [...acc, fallacy];
+              }, []),
             };
           }
           return a;
@@ -48,8 +53,6 @@ const CounterCardList = ({ argus: args }) => {
         .eq("level", argLevel)
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
         .order("created_at", { ascending: true });
-
-      console.log(newArgs);
 
       if (error) {
         console.error("Error fetching arguments", error);
@@ -80,6 +83,28 @@ const CounterCardList = ({ argus: args }) => {
     ).map(([level, args]) => args);
     setRenderedArgs(res);
   }, [argus]);
+
+  useEffect(() => {
+    const handler = () => {
+      setTimeout(() => {
+        const el = document.getElementById(window.location.hash);
+
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center",
+          });
+          el.animate(
+            [{ backgroundColor: "#fffee0" }, { backgroundColor: "initial" }],
+            { duration: 2000, iterations: 1 }
+          );
+        }
+      }, 0);
+    };
+
+    handler();
+  }, []);
 
   return (
     <div className="space-y-3">
@@ -116,10 +141,7 @@ const GetCard = memo(
         <p className="text-xs mb-2 text-slate-500">
           {argus.length}/{levelCount} arguments
         </p>
-        <ListCard
-          className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto"
-          maxHeight="600px"
-        >
+        <ListCard className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto">
           {argus.map((arg) => (
             <CounterCard key={arg.id} arg={arg} addToArgus={addToArgus} />
           ))}
@@ -148,7 +170,6 @@ const GetCard = memo(
     JSON.stringify(prevProps) === JSON.stringify(nextProps)
 );
 
-GetCard.whyDidYouRender = true;
 GetCard.displayName = "GetCard";
 
 export default CounterCardList;

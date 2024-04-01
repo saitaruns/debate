@@ -194,24 +194,21 @@ const ArgumentForm = ({
       ])
       .select("*, users!public_Argument_user_id_fkey(*)");
 
-    console.log(newArg, error);
-
     let fallacyData = [];
     if (isCounter && !error) {
       const { data: fData, error: fallacyError } = await supabase
         .from("ArgFallacyMap")
-        .insert(
-          data?.fallacies.map((f) => ({
+        .upsert(
+          data?.fallacies?.map((f) => ({
             arg_id: arg.id,
             fallacy_id: f,
-          }))
+          })) || []
         )
         .select("*, Fallacies(*)");
 
       if (fallacyError) {
         console.error(fallacyError);
       } else {
-        console.log(fData);
         fallacyData = fData;
       }
     }
@@ -259,7 +256,6 @@ const ArgumentForm = ({
         const newFallacies = Fallacies.map((f) => {
           return { label: f.name, value: f.id };
         });
-        console.log(newFallacies);
         setFallacies(newFallacies);
       }
     };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useContext, useState } from "react";
+import React, { memo, useContext, useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
@@ -23,14 +23,21 @@ import {
 import ArgumentForm from "../Forms/ArgumentForm";
 import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
-import { LucideSword } from "lucide-react";
+import { Ban, ExternalLink, Link2, Link2Off, LucideSword } from "lucide-react";
 import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
-import { AuthContext } from "../AuthContext";
+import { variantReturner } from "../../constants";
 import {
-  variantReturner,
-} from "../../constants";
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
+import useSWR from "swr";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
+import { useCopyToClipboard } from "@uidotdev/usehooks";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -52,6 +59,7 @@ const CounterCard = ({ arg, addToArgus }) => {
     "This action cannot be undone",
     "Close"
   );
+  const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const handleVote = async (vote) => {
     const { data, error } = await supabase
@@ -66,8 +74,6 @@ const CounterCard = ({ arg, addToArgus }) => {
       console.error("Error updating argument", error);
     }
   };
-
-  console.log(arg);
 
   const upVote = () => {
     if (voteState === 0) {
@@ -177,7 +183,12 @@ const CounterCard = ({ arg, addToArgus }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
-        <Card className="relative mb-1" id={`arg_${arg.id}`}>
+        <Card
+          className={cn("relative mb-1", {
+            "border-l-4 border-green-500": location.hash === `#arg_${arg.id}`,
+          })}
+          id={`#arg_${arg.id}`}
+        >
           <CardContent className="flex p-3 pt-6 pb-0 items-start">
             <div className="flex flex-col pr-2 items-center">
               <FaAngleUp
@@ -225,13 +236,21 @@ const CounterCard = ({ arg, addToArgus }) => {
               </ul>
               <div className="mt-2">
                 {arg?.fallacies?.map((fallacy) => (
-                  <Badge
-                    key={fallacy.id}
-                    variant={variantReturner(fallacy.name)}
-                    className="m-1 cursor-pointer"
-                  >
-                    {fallacy.name}
-                  </Badge>
+                  <Popover key={fallacy.id}>
+                    <PopoverTrigger>
+                      <Badge
+                        variant={variantReturner(fallacy.name)}
+                        className="m-1 cursor-pointer"
+                      >
+                        {fallacy.name}
+                      </Badge>
+                    </PopoverTrigger>
+                    <PopoverContent align="center" side="bottom">
+                      <ViewLink
+                        link={`https://en.wikipedia.org/api/rest_v1/page/summary/${fallacy.name}`}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 ))}
               </div>
             </div>
@@ -241,6 +260,19 @@ const CounterCard = ({ arg, addToArgus }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="end">
                 <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onClick={() => {
+                      copyToClipboard(
+                        location.host + location.pathname + `#arg_${arg.id}`
+                      );
+                      toast("Link copied to clipboard", {
+                        type: "success",
+                      });
+                    }}
+                  >
+                    <Link2 size={16} /> Share
+                  </DropdownMenuItem>
                   <DialogTrigger
                     asChild
                     onClick={() => openDialog(Dialogs.supportFormDialog)}
@@ -318,3 +350,69 @@ export default memo(
   (prevProps, nextProps) =>
     JSON.stringify(prevProps) === JSON.stringify(nextProps)
 );
+
+const fetcher = async (url) => {
+  const res = await fetch(url);
+
+  // If the status code is not in the range 200-299,
+  // we still try to parse and throw it.
+  if (!res.ok) {
+    const error = new Error("An error occurred while fetching the data.");
+    // Attach extra info to the error object.
+    error.info = await res.json();
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+const ViewLink = ({ link }) => {
+  const { data, error, isLoading } = useSWR(link, fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+
+  if (isLoading)
+    return (
+      <div>
+        <Skeleton className="h-9" />
+        <Skeleton className="h-4 mt-2" />
+        <Skeleton className="h-4 mt-2" />
+        <Skeleton className="h-4 mt-2" />
+      </div>
+    );
+  if (error)
+    return (
+      <div className="flex gap-2 items-center ">
+        {/* <Ban size={16} className="text-red-500 " /> */}
+        <p className="text-sm">Failed to load</p>
+      </div>
+    );
+
+  return (
+    <div>
+      <div className="flex gap-1 items-center">
+        <h1 className="text-lg font-medium line-clamp-1">{data?.title}</h1>
+        <Link
+          href={
+            data?.content_urls?.desktop?.page ||
+            data?.content_urls?.mobile?.page ||
+            "#"
+          }
+          target="_blank"
+          rel="noreferrer"
+        >
+          <ExternalLink
+            size={16}
+            className="text-blue-500 dark:text-blue-400"
+          />
+        </Link>
+      </div>
+      <p className="text-sm max-h-48 overflow-auto">{data?.extract}</p>
+      {/* {data.thumbnail ? (
+        <Image src={data.thumbnail.source} alt={data.title} fill />
+      ) : null} */}
+    </div>
+  );
+};
