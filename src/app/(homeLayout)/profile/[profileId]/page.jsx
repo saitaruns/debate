@@ -261,10 +261,12 @@ const Profile = async ({ params: { profileId } }) => {
                           <TableRow key={arg.id} className="">
                             <TableCell>
                               <Link
-                                className="line-clamp-1 overflow-hidden"
-                                href={`/arg/${arg.id}`}
+                                className="line-clamp-1 overflow-hidden break-words"
+                                href={`/arg/${arg.related_to}/#arg_${arg.id}`}
                               >
-                                {arg?.title?.slice(0, 14) || arg?.argument}
+                                {arg?.title?.slice(0, 14) ||
+                                  arg?.argument?.slice(0, 14)}{" "}
+                                ...
                               </Link>
                             </TableCell>
                             <TableCell className="">
@@ -283,7 +285,9 @@ const Profile = async ({ params: { profileId } }) => {
                               })}
                             </TableCell>
                             <TableCell className="">
-                              <Link href={`/arg/${arg.id}`}>
+                              <Link
+                                href={`/arg/${arg.related_to}/#arg_${arg.id}`}
+                              >
                                 <BiLinkAlt className="size-3" />
                               </Link>
                             </TableCell>

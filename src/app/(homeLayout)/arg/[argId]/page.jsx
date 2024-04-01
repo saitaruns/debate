@@ -10,11 +10,13 @@ export default async function Argument({ params: { argId } }) {
     n: 2,
   });
 
+  if (error) {
+    console.error("Error fetching argument:", error);
+  }
+
   return (
     <>
-      <div className="text-xl font-normal my-5 flex">
-        <h1 className="flex-1">{args[0].title}</h1>
-      </div>
+      <h1 className="text-xl font-normal mt-8 mb-5 ">{args?.[0]?.title}</h1>
       <CounterCardList argus={args} />
     </>
   );

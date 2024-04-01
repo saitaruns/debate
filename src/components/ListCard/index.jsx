@@ -6,10 +6,11 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
-const ListCard = ({ children, className }) => {
+const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
   const ref = useRef(null);
   const [scrollState, setScrollState] = useState(0);
   const [isShadow, setIsShadow] = useState(false);
+  const prevChildrenLength = useRef(3);
 
   const { scrollYProgress } = useScroll({
     container: ref,
@@ -19,13 +20,49 @@ const ListCard = ({ children, className }) => {
     if (ref.current) {
       const scrollHeight = ref.current.scrollHeight;
       const offsetHeight = ref.current.offsetHeight;
-      ref.current.scrollTo({
-        top: scrollHeight,
-        behavior: "smooth",
-      });
+      const currentChildrenLength = React.Children.count(children);
+
+      if (currentChildrenLength > prevChildrenLength.current) {
+        if (autoScroll) {
+          const lastChild = ref.current.lastChild;
+          const el =
+            lastChild.tagName.toLowerCase() === "button"
+              ? lastChild.previousElementSibling
+              : lastChild;
+
+          //scroll to the last child
+          el.scrollIntoView({
+            block: "center",
+            inline: "center",
+            behavior: "smooth",
+          });
+
+          // highlight the newly added children
+          [
+            ...Array(
+              currentChildrenLength - prevChildrenLength.current - 1
+            ).keys(),
+          ]
+            .reduce(
+              (acc, _) => [...acc, acc.at(-1).previousElementSibling],
+              [el]
+            )
+            .forEach((elem) => {
+              elem.animate(
+                [
+                  { backgroundColor: "hsl(var(--primary) / 0.1)" },
+                  { backgroundColor: "initial" },
+                ],
+                { duration: 2000, iterations: 1 }
+              );
+            });
+        }
+        prevChildrenLength.current = currentChildrenLength;
+      }
+
       setIsShadow(scrollHeight > offsetHeight);
     }
-  }, [children]);
+  }, [autoScroll, children]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollState(latest === 0 ? 0 : latest > 0 && latest < 0.9 ? 1 : 2);
@@ -33,7 +70,11 @@ const ListCard = ({ children, className }) => {
 
   return (
     <ScrollArea className={cn(className, "relative")}>
-      <div ref={ref} className="overflow-y-auto flex flex-col max-h-[500px]">
+      <div
+        ref={ref}
+        className="overflow-y-auto flex flex-col"
+        style={{ maxHeight }}
+      >
         {children}
       </div>
       <div
@@ -50,4 +91,4 @@ const ListCard = ({ children, className }) => {
   );
 };
 
-export default memo(ListCard);
+export default ListCard;

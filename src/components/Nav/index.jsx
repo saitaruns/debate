@@ -12,8 +12,11 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import ArgumentForm from "../Forms/ArgumentForm";
 import useConfirm from "@/hooks/useConfirm";
 import DarkModeToggle from "../DarkModeToggle";
-import UserNav from "../UserNav";
+import UserNav from "./UserNav";
 import SearchBar from "./SearchBar";
+import { Bell } from "lucide-react";
+import { cn } from "@/lib/utils";
+import NotificationBox from "./NotificationBox";
 
 const Nav = () => {
   const [scrollState, setScrollState] = useState(false);
@@ -72,6 +75,7 @@ const Nav = () => {
         </Dialog>
         <div className="sm:flex-1 flex justify-end items-center gap-3 mr-3">
           <DarkModeToggle />
+          <NotificationBox />
           <UserNav />
         </div>
       </nav>

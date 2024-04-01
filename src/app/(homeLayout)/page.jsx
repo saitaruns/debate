@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/pagination";
 import HomeLoading from "./homeloading";
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 10;
 
 function pagination(c, m) {
   var current = c,
@@ -101,7 +101,9 @@ export default async function Home({ searchParams }) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-3 pt-0">
-                <p className="line-clamp-2 text-xs">{arg?.argument}</p>
+                <p className="line-clamp-2 text-xs break-words">
+                  {arg?.argument}
+                </p>
               </CardContent>
               <CardFooter className="flex justify-between px-4 pb-2">
                 <div className="relative flex justify-center gap-1 items-center">

@@ -116,8 +116,7 @@ const SearchBar = () => {
       />
       <CommandList
         className={cn(
-          "absolute top-full bg-background w-full border shadow-md",
-          "border border-border/40 bg-background/95 backdrop-blur ",
+          "absolute top-full bg-background w-full border shadow-lg",
           {
             hidden: !sugOpen || search.length === 0,
           }
@@ -140,7 +139,7 @@ const SearchBar = () => {
         </CommandGroup>
         {(isTyping || loading) && (
           <CommandLoading>
-            <div className="space-y-2 py-1">
+            <div className="space-y-2 p-2 pb-3">
               <Skeleton className={cn("h-5 mx-1 rounded-full w-9/12")} />
               <Skeleton className={cn("h-5 mx-1 rounded-full w-8/12")} />
               <Skeleton className={cn("h-5 mx-1 rounded-full w-11/12")} />

@@ -6,7 +6,8 @@ import CounterCard from "../CounterCard";
 import clsx from "clsx";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader, Loader2, MoreVerticalIcon, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 const PAGE_SIZE = 2;
 
@@ -51,11 +52,11 @@ const CounterCardList = ({ argus: args }) => {
           n: null,
         })
         .eq("level", argLevel)
-        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
-        .order("created_at", { ascending: true });
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
       if (error) {
         console.error("Error fetching arguments", error);
+        toast.error("Error fetching arguments");
         setLoading(false);
       } else {
         setArgus((prevArgs) => {
@@ -96,7 +97,10 @@ const CounterCardList = ({ argus: args }) => {
             inline: "center",
           });
           el.animate(
-            [{ backgroundColor: "#fffee0" }, { backgroundColor: "initial" }],
+            [
+              { backgroundColor: "hsl(var(--primary) / 0.1)" },
+              { backgroundColor: "initial" },
+            ],
             { duration: 2000, iterations: 1 }
           );
         }
@@ -104,6 +108,14 @@ const CounterCardList = ({ argus: args }) => {
     };
 
     handler();
+
+    if (window.location.hash) {
+      window.addEventListener("hashchange", handler);
+    }
+
+    return () => {
+      window.removeEventListener("hashchange", handler);
+    };
   }, []);
 
   return (
@@ -141,7 +153,11 @@ const GetCard = memo(
         <p className="text-xs mb-2 text-slate-500">
           {argus.length}/{levelCount} arguments
         </p>
-        <ListCard className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto">
+        <ListCard
+          autoScroll
+          className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto"
+          maxHeight="600px"
+        >
           {argus.map((arg) => (
             <CounterCard key={arg.id} arg={arg} addToArgus={addToArgus} />
           ))}
@@ -157,8 +173,10 @@ const GetCard = memo(
               <span className="flex items-center gap-1">
                 <span>Show more</span>
                 {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
               </span>
             </Button>
           ) : null}

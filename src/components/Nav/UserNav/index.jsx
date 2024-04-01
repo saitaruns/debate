@@ -8,35 +8,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
+} from "../../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
 import { LogOut, Settings, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "@/components/AuthContext";
 
 export function UserNav() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const user = useContext(AuthContext);
+
   const {
     email = "dadas",
     name = "default",
-    avatar_url: image = "",
-  } = user || {};
-
-  useEffect(() => {
-    const supabase = createClient();
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user?.user_metadata);
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [router]);
+    avatar_url = "",
+  } = user?.user_metadata || {};
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -52,7 +41,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={image} alt={email} />
+            <AvatarImage src={avatar_url} alt={email} />
             <AvatarFallback>
               <span>{name[0]}</span>
             </AvatarFallback>
@@ -72,7 +61,7 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => router.push("/profile/me")}
+            onClick={() => router.push(`/profile/${user?.id}`)}
           >
             <User size={16} className="mr-2" />
             Profile

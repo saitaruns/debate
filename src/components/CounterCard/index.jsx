@@ -23,21 +23,17 @@ import {
 import ArgumentForm from "../Forms/ArgumentForm";
 import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
-import { Ban, ExternalLink, Link2, Link2Off, LucideSword } from "lucide-react";
+import { ExternalLink, Link2, LucideSword } from "lucide-react";
 import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
 import { variantReturner } from "../../constants";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
 import useSWR from "swr";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
+import ListCard from "../ListCard";
+import Image from "next/image";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -185,7 +181,7 @@ const CounterCard = ({ arg, addToArgus }) => {
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
           className={cn("relative mb-1", {
-            "border-l-4 border-green-500": location.hash === `#arg_${arg.id}`,
+            "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
           })}
           id={`#arg_${arg.id}`}
         >
@@ -209,9 +205,22 @@ const CounterCard = ({ arg, addToArgus }) => {
               />
             </div>
             <div className="flex flex-col flex-1">
-              <div className="text-xs text-slate-500">
-                countering <span className="text-slate-700">@outsmart</span>
-              </div>
+              {arg?.counter_to ? (
+                <div className="text-xs text-slate-500">
+                  countering{" "}
+                  <Badge variant="success" className="cursor-pointer">
+                    #{arg?.counter_to}
+                  </Badge>
+                </div>
+              ) : null}
+              {arg?.support_to ? (
+                <div className="text-xs text-slate-500">
+                  supporting{" "}
+                  <Badge variant="success" className="cursor-pointer">
+                    #{arg?.support_to}
+                  </Badge>
+                </div>
+              ) : null}
               <ReadMore minLines={3} className="mb-3">
                 {arg?.argument}
               </ReadMore>
@@ -226,7 +235,7 @@ const CounterCard = ({ arg, addToArgus }) => {
                       <Link
                         href={evidence.source}
                         target="_blank"
-                        className="font-normal text-xs sm:text-sm  text-blue-700 dark:text-blue-500 hover:underline hover:after:content-['_↗']"
+                        className="font-normal text-xs sm:text-sm  text-blue-700 dark:text-blue-500 hover:underline"
                       >
                         {evidence.source}
                       </Link>
@@ -245,7 +254,11 @@ const CounterCard = ({ arg, addToArgus }) => {
                         {fallacy.name}
                       </Badge>
                     </PopoverTrigger>
-                    <PopoverContent align="center" side="bottom">
+                    <PopoverContent
+                      className="p-0"
+                      align="center"
+                      side="bottom"
+                    >
                       <ViewLink
                         link={`https://en.wikipedia.org/api/rest_v1/page/summary/${fallacy.name}`}
                       />
@@ -269,6 +282,7 @@ const CounterCard = ({ arg, addToArgus }) => {
                       toast("Link copied to clipboard", {
                         type: "success",
                       });
+                      // history.replaceState({}, "", `#arg_${arg.id}`);
                     }}
                   >
                     <Link2 size={16} /> Share
@@ -306,7 +320,7 @@ const CounterCard = ({ arg, addToArgus }) => {
               href={`/profile/${arg?.user_id}`}
               className="flex items-center space-x-2 group"
             >
-              <Avatar className="w-6 h-6">
+              <Avatar className="size-4">
                 <AvatarImage
                   src={
                     arg?.user_data?.avatar_url || arg?.users?.data?.avatar_url
@@ -354,11 +368,8 @@ export default memo(
 const fetcher = async (url) => {
   const res = await fetch(url);
 
-  // If the status code is not in the range 200-299,
-  // we still try to parse and throw it.
   if (!res.ok) {
     const error = new Error("An error occurred while fetching the data.");
-    // Attach extra info to the error object.
     error.info = await res.json();
     error.status = res.status;
     throw error;
@@ -375,7 +386,7 @@ const ViewLink = ({ link }) => {
 
   if (isLoading)
     return (
-      <div>
+      <div className="p-3">
         <Skeleton className="h-9" />
         <Skeleton className="h-4 mt-2" />
         <Skeleton className="h-4 mt-2" />
@@ -384,16 +395,25 @@ const ViewLink = ({ link }) => {
     );
   if (error)
     return (
-      <div className="flex gap-2 items-center ">
-        {/* <Ban size={16} className="text-red-500 " /> */}
+      <div className="flex gap-2 p-3 items-center ">
         <p className="text-sm">Failed to load</p>
       </div>
     );
 
   return (
-    <div>
-      <div className="flex gap-1 items-center">
-        <h1 className="text-lg font-medium line-clamp-1">{data?.title}</h1>
+    <>
+      {data.thumbnail ? (
+        <div className="w-full h-44 relative">
+          <Image
+            src={data?.thumbnail?.source}
+            alt={data?.title}
+            fill
+            objectFit="cover"
+          />
+        </div>
+      ) : null}
+      <div className="flex gap-1 items-center px-3 pt-2">
+        <h1 className="text-lg font-medium line-clamp-1 mt-2">{data?.title}</h1>
         <Link
           href={
             data?.content_urls?.desktop?.page ||
@@ -409,10 +429,9 @@ const ViewLink = ({ link }) => {
           />
         </Link>
       </div>
-      <p className="text-sm max-h-48 overflow-auto">{data?.extract}</p>
-      {/* {data.thumbnail ? (
-        <Image src={data.thumbnail.source} alt={data.title} fill />
-      ) : null} */}
-    </div>
+      <ListCard className="text-sm mx-3 mb-3" maxHeight={"192px"}>
+        {data?.extract}
+      </ListCard>
+    </>
   );
 };
