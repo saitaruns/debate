@@ -6,7 +6,7 @@ import CounterCard from "../CounterCard";
 import clsx from "clsx";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "../ui/button";
-import { Loader, Loader2, MoreVerticalIcon, Plus } from "lucide-react";
+import { Loader, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 const PAGE_SIZE = 2;
@@ -87,6 +87,7 @@ const CounterCardList = ({ argus: args }) => {
 
   useEffect(() => {
     const handler = () => {
+      console.log("hashchange");
       setTimeout(() => {
         const el = document.getElementById(window.location.hash);
 
@@ -108,14 +109,6 @@ const CounterCardList = ({ argus: args }) => {
     };
 
     handler();
-
-    if (window.location.hash) {
-      window.addEventListener("hashchange", handler);
-    }
-
-    return () => {
-      window.removeEventListener("hashchange", handler);
-    };
   }, []);
 
   return (

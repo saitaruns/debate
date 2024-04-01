@@ -208,7 +208,14 @@ const CounterCard = ({ arg, addToArgus }) => {
               {arg?.counter_to ? (
                 <div className="text-xs text-slate-500">
                   countering{" "}
-                  <Badge variant="success" className="cursor-pointer">
+                  <Badge
+                    variant="success"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      console.log("clicked");
+                      history.pushState({}, "", `#arg_${arg.counter_to}`);
+                    }}
+                  >
                     #{arg?.counter_to}
                   </Badge>
                 </div>
@@ -216,7 +223,14 @@ const CounterCard = ({ arg, addToArgus }) => {
               {arg?.support_to ? (
                 <div className="text-xs text-slate-500">
                   supporting{" "}
-                  <Badge variant="success" className="cursor-pointer">
+                  <Badge
+                    variant="success"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      console.log("clicked");
+                      history.pushState({}, "", `#arg_${arg.support_to}`);
+                    }}
+                  >
                     #{arg?.support_to}
                   </Badge>
                 </div>
@@ -282,7 +296,6 @@ const CounterCard = ({ arg, addToArgus }) => {
                       toast("Link copied to clipboard", {
                         type: "success",
                       });
-                      // history.replaceState({}, "", `#arg_${arg.id}`);
                     }}
                   >
                     <Link2 size={16} /> Share
