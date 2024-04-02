@@ -50,7 +50,7 @@ const SearchBar = () => {
     const { data, error } = await supabase
       .from("Argument")
       .select("title")
-      .ilike("title", `%${query}%`)
+      .ilike("title", `%${query.trim()}%`)
       .limit(5);
     setLoading(false);
     if (error) {
@@ -117,6 +117,7 @@ const SearchBar = () => {
       <CommandList
         className={cn(
           "absolute top-full bg-background w-full border shadow-lg",
+          "h-[var(--cmdk-list-height)] transition-[height] duration-75 ease-in-out",
           {
             hidden: !sugOpen || search.length === 0,
           }

@@ -22,8 +22,10 @@ export default async function RootLayout({ children }) {
 
   return (
     <AuthContextProvider value={data?.user || {}}>
-      <Nav />
-      {children}
+      <div className="min-h-screen">
+        <Nav />
+        {children}
+      </div>
     </AuthContextProvider>
   );
 }

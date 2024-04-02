@@ -69,9 +69,12 @@ export default async function Home({ searchParams }) {
     error,
   } = await supabase
     .from("Argument")
-    .select("*, users!public_Argument_user_id_fkey(*)", {
-      count: "exact",
-    })
+    .select(
+      "*, users!public_Argument_user_id_fkey(*), related_args:Argument!related_to!inner(count)",
+      {
+        count: "exact",
+      }
+    )
     .neq("title", null)
     .ilike("title", `%${query}%`)
     .range((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE - 1)
@@ -95,9 +98,11 @@ export default async function Home({ searchParams }) {
                     {arg?.title}
                   </CardTitle>
                 </Link>
-                <CardDescription className="text-xs">
-                  {arg?.up_votes} up vote(s) | {arg?.down_votes} down vote(s) |{" "}
-                  {arg?.count} argument(s)
+                <CardDescription className="text-xs overflow-hidden h-4 relative">
+                  <span className="absolute animate-in slide-in-from-top fade-in-15 duration-300 ease-in-out">
+                    {arg?.up_votes} upvote(s) | {arg?.down_votes} downvote(s) |{" "}
+                    {arg?.related_args?.[0]?.count} argument(s)
+                  </span>
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-3 pt-0">
@@ -107,16 +112,16 @@ export default async function Home({ searchParams }) {
               </CardContent>
               <CardFooter className="flex justify-between px-4 pb-2">
                 <div className="relative flex justify-center gap-1 items-center">
-                  <span className="relative flex size-3">
+                  {/* <span className="relative flex size-3">
                     <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex rounded-full size-full bg-green-500" />
-                  </span>
-                  <div className="text-xs font-medium mt-[2px] flex items-center">
+                  </span> */}
+                  {/* <div className="text-xs font-medium mt-[2px] flex items-center">
                     <FancyNumber>{Math.ceil(Math.random() * 10)}</FancyNumber>{" "}
                     <span>
                       mem<span className="hidden sm:inline">bers</span> active
                     </span>
-                  </div>
+                  </div> */}
                 </div>
                 <Link
                   href={`/profile/${arg?.user_id}`}

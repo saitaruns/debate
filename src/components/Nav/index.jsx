@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import clsx from "clsx";
 
@@ -14,8 +14,6 @@ import useConfirm from "@/hooks/useConfirm";
 import DarkModeToggle from "../DarkModeToggle";
 import UserNav from "./UserNav";
 import SearchBar from "./SearchBar";
-import { Bell } from "lucide-react";
-import { cn } from "@/lib/utils";
 import NotificationBox from "./NotificationBox";
 
 const Nav = () => {
@@ -73,7 +71,7 @@ const Nav = () => {
             <ArgumentForm closeDialog={() => setOpen(false)} />
           </DialogContent>
         </Dialog>
-        <div className="sm:flex-1 flex justify-end items-center gap-3 mr-3">
+        <div className="sm:flex-1 flex justify-end items-center gap-3 mr-3 relative">
           <DarkModeToggle />
           <NotificationBox />
           <UserNav />

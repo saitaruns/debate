@@ -180,7 +180,7 @@ const CounterCard = ({ arg, addToArgus }) => {
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
-          className={cn("relative mb-1", {
+          className={cn("relative mb-2 shadow-md ", {
             "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
           })}
           id={`#arg_${arg.id}`}
@@ -263,9 +263,12 @@ const CounterCard = ({ arg, addToArgus }) => {
                     <PopoverTrigger>
                       <Badge
                         variant={variantReturner(fallacy.name)}
-                        className="m-1 cursor-pointer"
+                        className="m-1 cursor-pointer divide-x"
                       >
-                        {fallacy.name}
+                        <span className="text-xs pr-1">{fallacy?.name}</span>
+                        <span className={cn("text-xs pl-1")}>
+                          {fallacy?.count}
+                        </span>
                       </Badge>
                     </PopoverTrigger>
                     <PopoverContent

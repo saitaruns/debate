@@ -16,7 +16,9 @@ export default async function Argument({ params: { argId } }) {
 
   return (
     <>
-      <h1 className="text-xl font-normal mt-8 mb-5 ">{args?.[0]?.title}</h1>
+      <h1 className="text-xl font-normal mt-8 mb-5 break-words ">
+        {args?.[0]?.title}
+      </h1>
       <CounterCardList argus={args} />
     </>
   );

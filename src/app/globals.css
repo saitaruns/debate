@@ -26,8 +26,8 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.3rem;
 
-    --top-inset-shadow: 0 15px 30px -30px  rgba(0, 0, 0, 0.5);
-    --bottom-inset-shadow: 0 -15px 30px -30px  rgba(0, 0, 0, 0.5);
+    --top-inset-shadow:  0 25px 30px -30px  rgba(0, 0, 0, 0.5);
+    --bottom-inset-shadow: 0 -25px 30px -30px  rgba(0, 0, 0, 0.5);
   }
 
   .dark {
