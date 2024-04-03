@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "../ui/button";
 import { Loader, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 2;
 
@@ -112,7 +113,7 @@ const CounterCardList = ({ argus: args }) => {
   }, []);
 
   return (
-    <div className="space-y-3">
+    <>
       {renderedArgs.map((args) => {
         return (
           <GetCard
@@ -123,7 +124,7 @@ const CounterCardList = ({ argus: args }) => {
           />
         );
       })}
-    </div>
+    </>
   );
 };
 
@@ -138,8 +139,7 @@ const GetCard = memo(
     return (
       <div
         className={clsx(
-          "flex",
-          "flex-col",
+          "flex flex-col",
           argLevel % 2 === 0 ? "items-start" : "items-end"
         )}
       >

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import clsx from "clsx";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { MdOutlineSort } from "react-icons/md";
@@ -15,9 +15,13 @@ import DarkModeToggle from "../DarkModeToggle";
 import UserNav from "./UserNav";
 import SearchBar from "./SearchBar";
 import NotificationBox from "./NotificationBox";
+import { AuthContext } from "../AuthContext";
+import { cva } from "class-variance-authority";
 
 const Nav = () => {
   const [scrollState, setScrollState] = useState(false);
+  const user = useContext(AuthContext);
+
   const { scrollYProgress } = useScroll();
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollState(latest > 0);
@@ -61,20 +65,31 @@ const Nav = () => {
           <DialogTrigger asChild>
             <Button
               variant="ghost"
-              className="ml-2 mr-2 sm:mr-0 space-x-1 bg-transparent"
+              className="ml-2 sm:mr-0 space-x-1 bg-transparent"
             >
               <FaPlus />
               <span className="font-normal hidden sm:inline-block">Create</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="lg:min-w-[600px]">
+          <DialogContent>
             <ArgumentForm closeDialog={() => setOpen(false)} />
           </DialogContent>
         </Dialog>
-        <div className="sm:flex-1 flex justify-end items-center gap-3 mr-3 relative">
+        <div className="sm:flex-1 flex justify-end items-center gap-1 mr-3 relative">
           <DarkModeToggle />
-          <NotificationBox />
-          <UserNav />
+          {!user ? (
+            <Link
+              href="/auth/login"
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              Login
+            </Link>
+          ) : (
+            <>
+              <NotificationBox />
+              <UserNav user={user} />
+            </>
+          )}
         </div>
       </nav>
       <ConfirmationDialog />

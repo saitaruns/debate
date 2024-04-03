@@ -1,7 +1,7 @@
 "use client";
 
 import ReadMore from "@/components/ReadMore";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DialogDescription,
   DialogFooter,
@@ -22,7 +22,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
@@ -36,6 +36,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { createClient } from "@/utils/supabase/client";
+import { AuthContext } from "@/components/AuthContext";
+import Link from "next/link";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const MAX_EVIDENCE = 5;
 const MAX_ARG_LENGTH = 500;
@@ -79,6 +82,8 @@ const ArgumentForm = ({
   const [textareaRows, setTextareaRows] = useState(1);
   const [argStrength, setArgStrength] = useState(0);
   const [fallacies, setFallacies] = useState([]); // [1]
+  const user = useContext(AuthContext);
+
   const [ConfirmationDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to submit your argument"
@@ -262,9 +267,37 @@ const ArgumentForm = ({
     if (isCounter && !isSupport) getFallacies();
   }, [isCounter, isSupport]);
 
+  if (!user) {
+    return (
+      <>
+        <h1 className="text-xl font-medium">Login Required</h1>
+        <div className="flex flex-col">
+          <h2 className="text-md  sm:w-8/12">
+            Please login to post your argument
+          </h2>
+          <div className="mt-4 flex justify-end gap-2 flex-col-reverse sm:flex-row">
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Link href="/auth/login" className={cn(buttonVariants({}))}>
+              Login
+            </Link>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <Form {...counterForm}>
-      <form onSubmit={counterForm.handleSubmit(onCounterArgumentSubmit)}>
+      <form
+        onSubmit={counterForm.handleSubmit(onCounterArgumentSubmit)}
+        className={cn({
+          "lg:min-w-[700px]": isCounter,
+          "lg:min-w-[550px]": isSupport,
+          "lg:min-w-[600px]": !isCounter && !isSupport,
+        })}
+      >
         <DialogHeader className="mb-3">
           <DialogTitle>{isCounter ? "Counter" : ""} Argument</DialogTitle>
           <DialogDescription>

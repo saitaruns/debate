@@ -106,9 +106,12 @@ const NotificationItemList = ({}) => {
 
   return (
     <>
-      <ListCard className="overflow-auto relative" maxHeight="400px">
+      <ListCard
+        className="overflow-auto relative w-[calc(100vw-2rem)] sm:w-fit"
+        maxHeight="400px"
+      >
         {!isLoadingMore && notifications.length <= 0 ? (
-          <div className="w-[350px] p-4 border-b last:border-0 border-border/40 flex justify-center items-center">
+          <div className="w-full sm:w-[350px] p-4 border-b last:border-0 border-border/40 flex justify-center items-center">
             <span className="text-sm font-medium text-muted-foreground">
               No notifications
             </span>
@@ -124,7 +127,7 @@ const NotificationItemList = ({}) => {
               <AvatarImage src={notification?.users?.data?.avatar_url} />
               <AvatarFallback className="text-[6px]">OM</AvatarFallback>
             </Avatar>
-            <div className="w-[350px] break-words">
+            <div className="w-full sm:w-[350px] break-words">
               <h3 className="text-sm font-medium line-clamp-2">
                 {getNotificationTitle(notification)}
               </h3>
@@ -132,7 +135,7 @@ const NotificationItemList = ({}) => {
                 {notification?.message}
               </p>
               <span className="font-normal text-xs text-muted-foreground">
-                {formatDistanceToNow(notification?.created_at, new Date(), {
+                {formatDistanceToNow(notification?.created_at, {
                   addSuffix: true,
                 })}
               </span>
@@ -146,7 +149,7 @@ const NotificationItemList = ({}) => {
                 <Skeleton className="size-12 rounded-full" />
                 <div
                   key={i}
-                  className="w-[350px]  border-b last:border-0 border-border/40 space-y-1 p-1 flex-1"
+                  className="w-full sm:w-[350px]  border-b last:border-0 border-border/40 space-y-1 p-1 flex-1"
                 >
                   <Skeleton className="w-2/4 h-5" />
                   <Skeleton className="w-3/4 h-4" />

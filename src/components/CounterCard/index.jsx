@@ -43,7 +43,7 @@ const Dialogs = {
 
 const supabase = createClient();
 
-const CounterCard = ({ arg, addToArgus }) => {
+const CounterCard = ({ arg, addToArgus, className }) => {
   const [voteState, setVoteState] = useState(
     arg?.voted === "upvoted" ? 1 : arg?.voted === "downvoted" ? -1 : 0
   );
@@ -180,9 +180,13 @@ const CounterCard = ({ arg, addToArgus }) => {
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
-          className={cn("relative mb-2 shadow-md ", {
-            "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
-          })}
+          className={cn(
+            "relative mb-2 shadow-md ",
+            {
+              "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
+            },
+            className
+          )}
           id={`#arg_${arg.id}`}
         >
           <CardContent className="flex p-3 pt-6 pb-0 items-start">
@@ -358,16 +362,7 @@ const CounterCard = ({ arg, addToArgus }) => {
           </CardFooter>
         </Card>
         <DialogPortal forceMount>
-          <DialogContent
-            onPointerDownOutside={(e) => {
-              e.preventDefault();
-            }}
-            className={cn(
-              dialog === Dialogs.counterFormDialog && "lg:min-w-[700px]"
-            )}
-          >
-            {Forms[dialog]}
-          </DialogContent>
+          <DialogContent>{Forms[dialog]}</DialogContent>
         </DialogPortal>
       </Dialog>
       <ConfirmationDialog />

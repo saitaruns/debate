@@ -13,13 +13,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { LogOut, Settings, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "@/components/AuthContext";
 
-export function UserNav() {
+export function UserNav({ user }) {
   const router = useRouter();
-  const user = useContext(AuthContext);
+
+  if (!user) {
+    return null;
+  }
 
   const {
     email = "dadas",

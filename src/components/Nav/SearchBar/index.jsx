@@ -50,6 +50,7 @@ const SearchBar = () => {
     const { data, error } = await supabase
       .from("Argument")
       .select("title")
+      // .textSearch("title", query.trim())
       .ilike("title", `%${query.trim()}%`)
       .limit(5);
     setLoading(false);
@@ -156,7 +157,12 @@ const SearchBar = () => {
               className="px-3"
             >
               <SearchIcon className="size-3 mr-2 text-slate-400" />
-              {item.label}
+              <span
+                className="truncate max-w-[calc(100%-2rem)]"
+                title={item.label}
+              >
+                {item.label}
+              </span>
             </CommandItem>
           ))}
         </CommandGroup>

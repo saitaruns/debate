@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +11,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AuthContext } from "@/components/AuthContext";
 
 const useConfirm = (title, message, actionBtnMessage = "Submit") => {
+  const user = useContext(AuthContext);
   const [promise, setPromise] = useState(null);
 
   const confirm = () =>
@@ -34,6 +36,8 @@ const useConfirm = (title, message, actionBtnMessage = "Submit") => {
     handleClose();
   };
 
+  if (!user) return [() => null, () => true];
+
   const ConfirmationDialog = () => (
     <AlertDialog open={promise !== null}>
       <AlertDialogContent>
@@ -43,7 +47,9 @@ const useConfirm = (title, message, actionBtnMessage = "Submit") => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>{actionBtnMessage}</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirm}>
+            {actionBtnMessage}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

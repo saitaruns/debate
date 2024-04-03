@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/pagination";
 import HomeLoading from "./homeloading";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 2;
 
 function pagination(c, m) {
   var current = c,
@@ -89,9 +89,16 @@ export default async function Home({ searchParams }) {
       <div className="w-0 sm:w-2/12" />
       <Suspense key={query + currentPage} fallback={<HomeLoading />}>
         <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3 space-y-2">
-          <p className="m-0 text-xs">{count} argument(s)</p>
+          <p className="m-0 text-xs text-muted-foreground ">
+            {`${count} arguments`}
+            {count > 0 && " | "}
+            {`Page ${currentPage} of ${Math.ceil(count / PAGE_SIZE)} `}
+          </p>
           {args?.map((arg) => (
-            <Card key={arg.id} className="w-full shadow-md">
+            <Card
+              key={arg.id}
+              className="w-full shadow-none border-0 border-b [&>div]:pl-0"
+            >
               <CardHeader className="p-3">
                 <Link href={`/arg/${arg.id}`} className="hover:underline">
                   <CardTitle className="text-md font-medium truncate">
