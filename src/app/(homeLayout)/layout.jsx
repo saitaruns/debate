@@ -16,12 +16,12 @@ export default async function RootLayout({ children }) {
 
   const { data, error } = await supabase.auth.getUser();
 
-  if (error || !data?.user) {
-    redirect("/auth/login");
-  }
+  // if (error || !data?.user) {
+  //   redirect("/auth/login");
+  // }
 
   return (
-    <AuthContextProvider value={data?.user || {}}>
+    <AuthContextProvider value={data?.user}>
       <div className="min-h-screen">
         <Nav />
         {children}
