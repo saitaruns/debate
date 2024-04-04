@@ -2,7 +2,6 @@
 
 import ListCard from "@/components/ListCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +17,7 @@ import Link from "next/link";
 import React from "react";
 import useSWRInfinite from "swr/infinite";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 2;
 const NotificationBox = () => {
   const [open, setOpen] = React.useState(false);
   const [dot, setDot] = React.useState(true);
@@ -34,7 +33,9 @@ const NotificationBox = () => {
       <DropdownMenuTrigger className="relative">
         <Bell size={24} className="mr-1" />
         {dot && (
-          <span className="absolute -top-1 right-1 rounded-full bg-primary size-3" />
+          <span className="absolute -top-[0.5px] right-1 rounded-full bg-primary size-[0.8rem] text-[0.6rem] text-white flex justify-center items-center">
+            2
+          </span>
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -53,13 +54,13 @@ const NotificationBox = () => {
 const supabase = createClient();
 
 const fetcher = async (page) => {
-  console.log("fetching page", page);
+  console.log(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
   const { data, error } = await supabase
     .from("Notifications")
     .select(
       "*, users!public_Notifications_sender_id_fkey(*), Argument(related_to)"
     )
-    .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
+    .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -70,7 +71,6 @@ const fetcher = async (page) => {
 };
 
 const getKey = (pageIndex, previousPageData) => {
-  console.log("getting key", pageIndex, previousPageData);
   if (previousPageData && previousPageData.length === 0) return null;
   return String(pageIndex);
 };
@@ -91,6 +91,7 @@ const NotificationItemList = ({}) => {
     useSWRInfinite(getKey, fetcher, {
       revalidateFirstPage: false,
       revalidateOnMount: true,
+      dedupingInterval: 5000,
     });
 
   const isLoadingMore = isLoading || isValidating;
