@@ -2,7 +2,7 @@
 
 import React, { memo, useContext, useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
-import { FaAngleDown, FaAngleUp, FaShieldAlt } from "react-icons/fa";
+import { FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
 import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -23,7 +23,13 @@ import {
 import ArgumentForm from "../Forms/ArgumentForm";
 import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
-import { ExternalLink, Link2, LucideSword } from "lucide-react";
+import {
+  ArrowBigDown,
+  ArrowBigUp,
+  ExternalLink,
+  Link2,
+  LucideSword,
+} from "lucide-react";
 import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
@@ -191,20 +197,37 @@ const CounterCard = ({ arg, addToArgus, className }) => {
         >
           <CardContent className="flex p-3 pt-6 pb-0 items-start">
             <div className="flex flex-col pr-2 items-center">
-              <FaAngleUp
+              <ArrowBigUp
                 size={24}
-                className={cn("cursor-pointer", {
-                  "text-green-500": voteState === 1,
-                })}
+                strokeWidth={1}
+                className={cn(
+                  "cursor-pointer",
+                  "transition-all active:-translate-y-1",
+                  {
+                    "fill-primary": voteState === 1,
+                  }
+                )}
                 onClick={upVote}
               />
-              {/* <FancyNumber number={Number(voteCount)} className="text-sm" /> */}
-              <span>{voteCount}</span>
-              <FaAngleDown
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  "transition-all",
+                  voteCount > 0 ? "text-green-700" : "text-red-700"
+                )}
+              >
+                {voteCount}
+              </span>
+              <ArrowBigDown
                 size={24}
-                className={cn("cursor-pointer", {
-                  "text-red-500": voteState === -1,
-                })}
+                strokeWidth={1}
+                className={cn(
+                  "cursor-pointer",
+                  "transition-all active:translate-y-1",
+                  {
+                    "fill-destructive": voteState === -1,
+                  }
+                )}
                 onClick={downVote}
               />
             </div>

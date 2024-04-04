@@ -160,7 +160,7 @@ const NotificationItemList = ({}) => {
             ))}
           </>
         ) : null}
-        {!isReachingEnd && !isLoadingMore ? (
+        {!isReachingEnd ? (
           <Button
             className="w-full"
             variant="outline"

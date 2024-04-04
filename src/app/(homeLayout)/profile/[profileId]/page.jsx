@@ -23,20 +23,13 @@ import {
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  ArrowUpRightIcon,
   BadgeInfoIcon,
-  ChevronUp,
   InfoIcon,
-  Link2,
   MessageSquare,
   Rotate3DIcon,
   ShieldAlert,
-  UsersIcon,
 } from "lucide-react";
-import { info } from "autoprefixer";
 import { Badge } from "@/components/ui/badge";
-import { Popover } from "@/components/ui/popover";
-import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import {
   Tooltip,
   TooltipContent,
@@ -44,9 +37,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { BiLinkAlt } from "react-icons/bi";
-import FancyNumber from "@/components/Number";
 import { variantReturner } from "@/constants";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const Profile = async ({ params: { profileId } }) => {
   const cookieStore = cookies();
@@ -218,9 +210,6 @@ const Profile = async ({ params: { profileId } }) => {
                       className="m-1 cursor-pointer"
                     >
                       {fallacy.name}
-                      <FancyNumber className="ml-2">
-                        {fallacy.count || 23}
-                      </FancyNumber>
                     </Badge>
                   ))}
                 </div>

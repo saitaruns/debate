@@ -125,16 +125,17 @@ export default async function Home({ searchParams }) {
                     </CardContent>
                     <CardFooter className="flex justify-between px-4 pb-2">
                       <div className="relative flex justify-center gap-1 items-center">
-                        {/* <span className="relative flex size-3">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-full bg-green-500" />
-                  </span> */}
-                        {/* <div className="text-xs font-medium mt-[2px] flex items-center">
-                    <FancyNumber>{Math.ceil(Math.random() * 10)}</FancyNumber>{" "}
-                    <span>
-                      mem<span className="hidden sm:inline">bers</span> active
-                    </span>
-                  </div> */}
+                        <span className="relative flex size-3">
+                          <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full size-full bg-green-500" />
+                        </span>
+                        <div className="text-xs mt-[2px] text-muted-foreground flex items-center space-x-1">
+                          <span>{Math.ceil(Math.random() * 10)}</span>
+                          <span>
+                            mem<span className="hidden sm:inline">bers</span>{" "}
+                            active
+                          </span>
+                        </div>
                       </div>
                       <Link
                         href={`/profile/${arg?.user_id}`}
