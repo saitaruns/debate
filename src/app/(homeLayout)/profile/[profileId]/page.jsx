@@ -261,7 +261,7 @@ const Profile = async ({ params: { profileId } }) => {
                           <TableRow key={arg.id} className="">
                             <TableCell>
                               <Link
-                                className="line-clamp-1 overflow-hidden break-words"
+                                className="line-clamp-1 overflow-hidden break-all"
                                 href={`/arg/${arg.related_to}/#arg_${arg.id}`}
                               >
                                 {arg?.title?.slice(0, 14) ||

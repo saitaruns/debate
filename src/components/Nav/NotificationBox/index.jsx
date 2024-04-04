@@ -127,7 +127,7 @@ const NotificationItemList = ({}) => {
               <AvatarImage src={notification?.users?.data?.avatar_url} />
               <AvatarFallback className="text-[6px]">OM</AvatarFallback>
             </Avatar>
-            <div className="w-full sm:w-[350px] break-words">
+            <div className="w-full sm:w-[350px] break-all">
               <h3 className="text-sm font-medium line-clamp-2">
                 {getNotificationTitle(notification)}
               </h3>

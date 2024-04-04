@@ -29,7 +29,7 @@ const ReadMore = ({ children: text, className, minLines = 3 }) => {
 
   const pClass = clsx(
     isTruncated && `line-clamp-${minLines}`,
-    "text-sm overflow-hidden break-words w-full"
+    "text-sm overflow-hidden break-all w-full"
   );
 
   if (!text) return null;

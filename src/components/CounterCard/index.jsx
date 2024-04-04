@@ -248,7 +248,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                   return (
                     <li
                       key={evidence.source}
-                      className="truncate break-words w-full"
+                      className="truncate break-all w-full"
                     >
                       <Link
                         href={evidence.source}
