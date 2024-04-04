@@ -203,7 +203,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                   "cursor-pointer",
                   "transition-all active:-translate-y-1",
                   {
-                    "fill-primary": voteState === 1,
+                    "fill-primary stroke-primary": voteState === 1,
                   }
                 )}
                 onClick={upVote}
@@ -224,7 +224,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                   "cursor-pointer",
                   "transition-all active:translate-y-1",
                   {
-                    "fill-destructive": voteState === -1,
+                    "fill-destructive stroke-destructive": voteState === -1,
                   }
                 )}
                 onClick={downVote}
