@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import FancyNumber from "@/components/Number";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";

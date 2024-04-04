@@ -21,7 +21,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import ArgumentForm from "../Forms/ArgumentForm";
-import FancyNumber from "../Number";
 import { MdOutlineReportProblem } from "react-icons/md";
 import {
   ArrowBigDown,
