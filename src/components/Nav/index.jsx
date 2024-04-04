@@ -75,7 +75,7 @@ const Nav = () => {
             <ArgumentForm closeDialog={() => setOpen(false)} />
           </DialogContent>
         </Dialog>
-        <div className="sm:flex-1 flex justify-end items-center gap-1 mr-3 relative">
+        <div className="sm:flex-1 flex justify-end items-center gap-2 mr-3 relative">
           <DarkModeToggle />
           {!user ? (
             <Link
@@ -85,10 +85,10 @@ const Nav = () => {
               Login
             </Link>
           ) : (
-            <>
+            <div className="gap-3 flex justify-center">
               <NotificationBox />
               <UserNav user={user} />
-            </>
+            </div>
           )}
         </div>
       </nav>

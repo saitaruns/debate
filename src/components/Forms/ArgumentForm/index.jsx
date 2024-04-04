@@ -271,9 +271,9 @@ const ArgumentForm = ({
     return (
       <>
         <h1 className="text-xl font-medium">Login Required</h1>
-        <div className="flex flex-col">
-          <h2 className="text-md  sm:w-8/12">
-            Please login to post your argument
+        <div className="flex flex-col gap-10">
+          <h2 className="text-md text-muted-foreground ">
+            Please login to your account to post an argument
           </h2>
           <div className="mt-4 flex justify-end gap-2 flex-col-reverse sm:flex-row">
             <DialogClose asChild>
