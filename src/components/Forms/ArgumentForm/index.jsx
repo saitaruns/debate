@@ -270,7 +270,7 @@ const ArgumentForm = ({
   if (!user) {
     return (
       <>
-        <h1 className="text-xl font-medium">Login Required</h1>
+        <DialogHeader>Login Required</DialogHeader>
         <div className="flex flex-col gap-10">
           <h2 className="text-md text-muted-foreground ">
             Please login to your account to post an argument

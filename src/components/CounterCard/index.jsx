@@ -6,7 +6,13 @@ import { FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
 import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "../ui/dialog";
 import { HiDotsVertical } from "react-icons/hi";
 import ReportForm from "../Forms/ReportForm";
 import Link from "next/link";
@@ -39,6 +45,8 @@ import { Skeleton } from "../ui/skeleton";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
 import ListCard from "../ListCard";
 import Image from "next/image";
+import { Button, buttonVariants } from "../ui/button";
+import { AuthContext } from "../AuthContext";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -55,6 +63,9 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   const [voteCount, setVoteCount] = useState(arg.up_votes - arg.down_votes);
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState(null);
+  const user = useContext(AuthContext);
+  const [loginDialog, setLoginDialog] = useState(false);
+
   const [ConfirmationDialog, confirm] = useConfirm(
     "Are you sure?",
     "This action cannot be undone",
@@ -63,13 +74,16 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const handleVote = async (vote) => {
-    const { data, error } = await supabase
+    const {
+      data: [{ Argument: new_arg }],
+      error,
+    } = await supabase
       .from("ArgVoteUserMap")
       .upsert({
         arg_id: arg.id,
         type: vote,
       })
-      .select();
+      .select("arg_id, Argument(*)");
 
     if (error) {
       console.error("Error updating argument", error);
@@ -77,10 +91,13 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   };
 
   const upVote = () => {
+    if (!user) {
+      setLoginDialog(true);
+      return;
+    }
     if (voteState === 0) {
       setVoteState(1);
-      setVoteCount(voteCount + 1);
-      // toast("You have upvoted this argument", { type: "success" });
+      setVoteCount((v) => v + 1);
       toast.promise(() => handleVote("upvote"), {
         loading: "Upvoting...",
         success: "You have upvoted this argument",
@@ -89,8 +106,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     }
     if (voteState === 1) {
       setVoteState(0);
-      setVoteCount(voteCount - 1);
-      // toast("You have removed your upvote", { type: "success" });
+      setVoteCount((v) => v - 1);
       toast.promise(() => handleVote("novote"), {
         loading: "Removing upvote...",
         success: "You have removed your upvote",
@@ -99,8 +115,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     }
     if (voteState === -1) {
       setVoteState(1);
-      setVoteCount(voteCount + 2);
-      // toast("You have upvoted this argument", { type: "success" });
+      setVoteCount((v) => v + 2);
       toast.promise(() => handleVote("upvote"), {
         loading: "Upvoting...",
         success: "You have upvoted this argument",
@@ -110,10 +125,14 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   };
 
   const downVote = () => {
+    if (!user) {
+      setLoginDialog(true);
+      return;
+    }
+
     if (voteState === 0) {
       setVoteState(-1);
-      setVoteCount(voteCount - 1);
-      // toast("You have downvoted this argument", { type: "success" });
+      setVoteCount((v) => v - 1);
       toast.promise(() => handleVote("downvote"), {
         loading: "Downvoting...",
         success: "You have downvoted this argument",
@@ -122,8 +141,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     }
     if (voteState === -1) {
       setVoteState(0);
-      setVoteCount(voteCount + 1);
-      // toast("You have removed your downvote", { type: "success" });
+      setVoteCount((v) => v + 1);
       toast.promise(() => handleVote("novote"), {
         loading: "Removing downvote...",
         success: "You have removed your downvote",
@@ -132,8 +150,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     }
     if (voteState === 1) {
       setVoteState(-1);
-      setVoteCount(voteCount - 2);
-      // toast("You have downvoted this argument", { type: "success" });
+      setVoteCount((v) => v - 2);
       toast.promise(() => handleVote("downvote"), {
         loading: "Downvoting...",
         success: "You have downvoted this argument",
@@ -186,9 +203,10 @@ const CounterCard = ({ arg, addToArgus, className }) => {
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
           className={cn(
-            "relative mb-2 shadow-md ",
+            "relative mb-2 shadow-md hover:opacity-100 transition-all delay-200",
             {
               "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
+              "opacity-55": voteCount < -10,
             },
             className
           )}
@@ -201,7 +219,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                 strokeWidth={1}
                 className={cn(
                   "cursor-pointer",
-                  "transition-all active:-translate-y-1",
+                  "transition-all active:-translate-y-[0.75px]",
                   {
                     "fill-primary stroke-primary": voteState === 1,
                   }
@@ -209,11 +227,10 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                 onClick={upVote}
               />
               <span
-                className={cn(
-                  "text-sm font-medium",
-                  "transition-all",
-                  voteCount > 0 ? "text-green-700" : "text-red-700"
-                )}
+                className={cn("text-sm font-semibold", "transition-all", {
+                  "text-primary": voteCount > 0,
+                  "text-destructive": voteCount < 0,
+                })}
               >
                 {voteCount}
               </span>
@@ -222,7 +239,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                 strokeWidth={1}
                 className={cn(
                   "cursor-pointer",
-                  "transition-all active:translate-y-1",
+                  "transition-all active:translate-y-[0.75px]",
                   {
                     "fill-destructive stroke-destructive": voteState === -1,
                   }
@@ -289,7 +306,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                     <PopoverTrigger>
                       <Badge
                         variant={variantReturner(fallacy.name)}
-                        className="m-1 cursor-pointer divide-x"
+                        className="m-1 ml-0 cursor-pointer divide-x"
                       >
                         <span className="text-xs pr-1">{fallacy?.name}</span>
                         <span className={cn("text-xs pl-1")}>
@@ -388,6 +405,24 @@ const CounterCard = ({ arg, addToArgus, className }) => {
         </DialogPortal>
       </Dialog>
       <ConfirmationDialog />
+      <Dialog open={loginDialog} onOpenChange={setLoginDialog}>
+        <DialogContent>
+          <DialogHeader>Login Required</DialogHeader>
+          <div className="flex flex-col gap-10">
+            <h2 className="text-md text-muted-foreground ">
+              Please login to your account to post an argument
+            </h2>
+            <div className="mt-4 flex justify-end gap-2 flex-col-reverse sm:flex-row">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Link href="/auth/login" className={cn(buttonVariants({}))}>
+                Login
+              </Link>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
