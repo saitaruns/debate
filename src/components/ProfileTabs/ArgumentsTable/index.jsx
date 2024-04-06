@@ -78,7 +78,7 @@ const ArgumentsTable = ({ user, count, type }) => {
 
   const getKey = (pageIndex, previousPageData) => {
     if (previousPageData && previousPageData.length === 0) return null;
-    return [type, String(pageIndex)];
+    return [`${type}_${user.id}`, String(pageIndex)];
   };
 
   const { data, error, isLoading, isValidating, size, setSize } =
