@@ -179,7 +179,7 @@ export default async function Home({ searchParams }) {
                 ))}
               </>
             ) : (
-              <div className="flex flex-col gap-10 items-center">
+              <div className="flex flex-col gap-10 pt-16 items-center">
                 <div className="w-full h-64 relative">
                   <Image
                     src="/blank_canvas.svg"
