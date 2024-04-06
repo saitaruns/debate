@@ -122,7 +122,7 @@ const NotificationItemList = ({}) => {
           <Link
             key={notification.id}
             className="p-4 border-b last:border-0 border-border/40 hover:bg-primary/10 flex gap-2"
-            href={`/arg/${notification?.Argument?.related_to}/#arg_${notification?.arg_id}`}
+            href={`/arg/${notification?.Argument?.related_to}/?arg=${notification?.arg_id}`}
           >
             <Avatar className="size-8">
               <AvatarImage src={notification?.users?.data?.avatar_url} />

@@ -47,6 +47,7 @@ import ListCard from "../ListCard";
 import Image from "next/image";
 import { Button, buttonVariants } from "../ui/button";
 import { AuthContext } from "../AuthContext";
+import { useSearchParams } from "next/navigation";
 
 const Dialogs = {
   supportFormDialog: "supportForm",
@@ -72,6 +73,8 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     "Close"
   );
   const [copiedText, copyToClipboard] = useCopyToClipboard();
+
+  const searchParams = useSearchParams();
 
   const handleVote = async (vote) => {
     const {
@@ -205,7 +208,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
           className={cn(
             "relative mb-2 shadow-md hover:opacity-100 transition-all delay-200",
             {
-              "border-l-4 border-green-700": location.hash === `#arg_${arg.id}`,
+              "border-l-4 border-green-700": searchParams.has("arg", arg.id),
               "opacity-55": voteCount < -10,
             },
             className
@@ -256,7 +259,6 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                     className="cursor-pointer"
                     onClick={() => {
                       console.log("clicked");
-                      history.pushState({}, "", `#arg_${arg.counter_to}`);
                     }}
                   >
                     #{arg?.counter_to}
@@ -271,7 +273,6 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                     className="cursor-pointer"
                     onClick={() => {
                       console.log("clicked");
-                      history.pushState({}, "", `#arg_${arg.support_to}`);
                     }}
                   >
                     #{arg?.support_to}
@@ -337,7 +338,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                     className="cursor-pointer gap-2"
                     onClick={() => {
                       copyToClipboard(
-                        location.host + location.pathname + `#arg_${arg.id}`
+                        location.host + location.pathname + `?arg=${arg.id}`
                       );
                       toast("Link copied to clipboard", {
                         type: "success",

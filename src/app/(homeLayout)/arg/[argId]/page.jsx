@@ -2,11 +2,15 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import CounterCardList from "@/components/CounterCardList";
 
-export default async function Argument({ params: { argId } }) {
+export default async function Argument({
+  params: { argId },
+  searchParams: { arg },
+}) {
   const supabase = createClient(cookies());
 
   let { data: args, error } = await supabase.rpc("get_argument_rows", {
     a_id: argId,
+    m_arg_id: arg,
     n: 2,
   });
 

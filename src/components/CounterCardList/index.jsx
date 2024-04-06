@@ -61,9 +61,14 @@ const CounterCardList = ({ argus: args }) => {
         setLoading(false);
       } else {
         setArgus((prevArgs) => {
-          const newArgus = [...prevArgs, ...newArgs].sort(
-            (a, b) => a.level - b.level
-          );
+          const newArgus = [...prevArgs, ...newArgs]
+            .reduce((acc, arg) => {
+              if (acc.find((a) => a.id === arg.id)) {
+                return acc;
+              }
+              return [...acc, arg];
+            }, [])
+            .sort((a, b) => a.level - b.level);
           return newArgus;
         });
         setLoading(false);
@@ -88,9 +93,10 @@ const CounterCardList = ({ argus: args }) => {
 
   useEffect(() => {
     const handler = () => {
-      console.log("hashchange");
       setTimeout(() => {
-        const el = document.getElementById(window.location.hash);
+        const searchParams = new URLSearchParams(window.location.search);
+        const argId = searchParams.get("arg");
+        const el = document.getElementById(`#arg_${argId}`);
 
         if (el) {
           el.scrollIntoView({

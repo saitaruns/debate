@@ -8,26 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 import { cookies } from "next/headers";
-import { formatDistance } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   BadgeInfoIcon,
   InfoIcon,
   MessageSquare,
   Rotate3DIcon,
-  ShieldAlert,
+  Tags,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,30 +27,17 @@ import {
 import { BiLinkAlt } from "react-icons/bi";
 import { variantReturner } from "@/constants";
 import { cn } from "@/lib/utils";
+import ArgumentsTable from "@/components/ProfileTabs/ArgumentsTable";
 
 const Profile = async ({ params: { profileId } }) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, count, error } = await supabase
-    .from("Argument")
-    .select(
-      "*, users!public_Argument_user_id_fkey(*), votes:public_ArgVoteUserMap_arg_id_fkey(*), fallacies:public_ArgFallacyMap_arg_id_fkey(id, Fallacies(*))",
-      { count: "exact" }
-    )
-    .eq("user_id", profileId)
-    // .neq("title", null)
-    .order("created_at", { ascending: false })
-    .range(0, 2)
-    .then((res) => {
-      return {
-        ...res,
-        data: res?.data?.map((arg) => {
-          arg.fallacies = arg.fallacies.map((fallacy) => fallacy.Fallacies);
-          return arg;
-        }),
-      };
-    });
+  const { data, error } = await supabase
+    .rpc("get_profile_data", {
+      profile_id: profileId,
+    })
+    .single();
 
   if (error || !data) {
     return <div>Error</div>;
@@ -75,23 +50,23 @@ const Profile = async ({ params: { profileId } }) => {
           <div className="size-44 relative">
             <Image
               alt="Profile Picture"
-              src={data?.[0]?.users?.data?.avatar_url}
+              src={data?.data?.avatar_url}
               fill
               className="object-cover"
             />
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-bold">
-              {data?.[0]?.users?.data?.name}
+              {data?.data?.name}
               <p className="text-lg text-muted-foreground font-normal">
-                {data?.[0]?.users?.data?.email}
+                {data?.data?.email}
               </p>
             </h2>
             <div className="text-muted-foreground text-sm">
               <h3>
                 Trust Score
                 <span className="text-primary ml-1">
-                  {data?.[0]?.users?.data?.trust_score || "100%"}{" "}
+                  {data?.trust_score || "0%"}{" "}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <InfoIcon className="h-3 w-3 text-muted-foreground inline-block cursor-pointer" />
@@ -151,31 +126,25 @@ const Profile = async ({ params: { profileId } }) => {
                 icon: (
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 ),
-                title: "Arguments",
-                count: count,
-                info: "2% from last month",
+                title: "MainArguments",
+                count: data?.ma_count,
+                info: "Total arguments started by user",
               },
               {
                 icon: (
                   <Rotate3DIcon className="h-4 w-4 text-muted-foreground" />
                 ),
                 title: "Counters",
-                count: 0,
-                info: "2% from last month",
-              },
-              {
-                icon: <ArrowUpIcon className="h-4 w-4 text-muted-foreground" />,
-                title: "Upvotes",
-                count: 0,
-                info: "2% from last month",
+                count: data?.ca_count,
+                info: "Total counters by user",
               },
               {
                 icon: (
-                  <ArrowDownIcon className="h-4 w-4 text-muted-foreground" />
+                  <Rotate3DIcon className="h-4 w-4 text-muted-foreground" />
                 ),
-                title: "Downvotes",
-                count: 0,
-                info: "2% from last month",
+                title: "Support",
+                count: data?.sa_count,
+                info: "Total support by user",
               },
             ].map(({ title, count, info, icon }) => (
               <Card key={title}>
@@ -184,7 +153,7 @@ const Profile = async ({ params: { profileId } }) => {
                   {icon}
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{count}</div>
+                  <div className="text-2xl font-bold">{count || 0}</div>
                   <p className="text-xs text-muted-foreground">{info}</p>
                 </CardContent>
               </Card>
@@ -195,7 +164,7 @@ const Profile = async ({ params: { profileId } }) => {
               <CardHeader className="p-4">
                 <CardTitle className="text-xl flex justify-between items-center">
                   <span>Top Fallacies tagged</span>
-                  <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+                  <Tags className="h-4 w-4 text-muted-foreground" />
                 </CardTitle>
                 <CardDescription className="">
                   Most common fallacies
@@ -203,13 +172,16 @@ const Profile = async ({ params: { profileId } }) => {
               </CardHeader>
               <CardContent className="pb-4 px-3">
                 <div className="">
-                  {data?.[0]?.fallacies?.map((fallacy) => (
+                  {data?.top_f?.map((fallacy) => (
                     <Badge
                       key={fallacy.id}
                       variant={variantReturner(fallacy.name)}
-                      className="m-1 cursor-pointer"
+                      className="m-1 ml-0 cursor-pointer divide-x"
                     >
-                      {fallacy.name}
+                      <span className="text-xs pr-1">{fallacy?.name}</span>
+                      <span className={cn("text-xs pl-1")}>
+                        {fallacy?.count}
+                      </span>
                     </Badge>
                   ))}
                 </div>
@@ -217,77 +189,28 @@ const Profile = async ({ params: { profileId } }) => {
             </Card>
             <Tabs defaultValue="main" className="">
               <TabsList>
-                <TabsTrigger value="main">Recent Arguments</TabsTrigger>
-                <TabsTrigger value="counters">Recent Counters</TabsTrigger>
+                <TabsTrigger value="main">Arguments</TabsTrigger>
+                <TabsTrigger value="support">Support Arguments</TabsTrigger>
+                <TabsTrigger value="counter">Counter Arguments</TabsTrigger>
               </TabsList>
-              <TabsContent value="main" className="space-y-3">
-                <Card className="xl:col-span-2">
-                  <CardHeader className="flex flex-row items-center">
-                    <div className="grid gap-2">
-                      <CardTitle>Arguments</CardTitle>
-                      <CardDescription>
-                        Recent arguments by {data?.[0]?.users?.data?.name}
-                      </CardDescription>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Argument</TableHead>
-                          <TableHead className=" sm:table-cell">
-                            Fallacies
-                          </TableHead>
-                          <TableHead className="text-right">Counters</TableHead>
-                          <TableHead className="text-right">Upvotes</TableHead>
-                          <TableHead className="">Downvotes</TableHead>
-                          <TableHead className="">Date</TableHead>
-                          <TableHead className="">Link</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {data?.map((arg) => (
-                          <TableRow key={arg.id} className="">
-                            <TableCell>
-                              <Link
-                                className="line-clamp-1 overflow-hidden break-all"
-                                href={`/arg/${arg.related_to}/#arg_${arg.id}`}
-                              >
-                                {arg?.title?.slice(0, 14) ||
-                                  arg?.argument?.slice(0, 14)}{" "}
-                                ...
-                              </Link>
-                            </TableCell>
-                            <TableCell className="">
-                              {arg?.fallacies?.length}
-                            </TableCell>
-                            <TableCell className="">
-                              {arg?.counters || 2}
-                            </TableCell>
-                            <TableCell className="">{arg?.up_votes}</TableCell>
-                            <TableCell className="">
-                              {arg?.down_votes}
-                            </TableCell>
-                            <TableCell className=" truncate">
-                              {formatDistance(arg.created_at, new Date(), {
-                                addSuffix: true,
-                              })}
-                            </TableCell>
-                            <TableCell className="">
-                              <Link
-                                href={`/arg/${arg.related_to}/#arg_${arg.id}`}
-                              >
-                                <BiLinkAlt className="size-3" />
-                              </Link>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="counters"></TabsContent>
+              {["main", "support", "counter"].map((tab) => (
+                <TabsContent value={tab} key={tab}>
+                  <ArgumentsTable
+                    user={{
+                      id: profileId,
+                      ...data?.data,
+                    }}
+                    count={
+                      {
+                        main: data?.ma_count,
+                        support: data?.sa_count,
+                        counter: data?.ca_count,
+                      }[tab]
+                    }
+                    type={tab}
+                  />
+                </TabsContent>
+              ))}
             </Tabs>
           </div>
         </div>
