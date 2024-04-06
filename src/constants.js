@@ -61,6 +61,13 @@ function variantReturner(fallacyName) {
   }
 }
 
+const SELECT_KEYS = {
+  newest: "newest",
+  oldest: "oldest",
+  highest_score: "highest_score",
+  most_arguments: "most_arguments",
+};
+
 export {
   relevanceFallacies,
   presumptionFallacies,
@@ -68,5 +75,6 @@ export {
   appealFallacies,
   structureFallacies,
   otherFallacies,
+  SELECT_KEYS,
   variantReturner,
 };

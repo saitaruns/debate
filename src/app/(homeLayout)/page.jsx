@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/pagination";
 import HomeLoading from "./homeloading";
 import Image from "next/image";
+import SelectComp from "@/components/SelectComp";
+import { SELECT_KEYS } from "@/constants";
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 10;
 
 function pagination(c, m) {
   var current = c,
@@ -62,23 +64,33 @@ export default async function Home({ searchParams }) {
   const supabase = createClient(cookieStore);
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+  const filter = searchParams?.filter || "newest";
 
-  let {
-    data: args,
-    count,
-    error,
-  } = await supabase
-    .from("Argument")
-    .select(
-      "*, users!public_Argument_user_id_fkey(*), related_args:Argument!related_to!inner(count)",
-      {
-        count: "exact",
-      }
-    )
+  let supaQuery = supabase
+    .rpc("get_main_args", null, { count: "exact" })
     .neq("title", null)
     .ilike("title", `%${query}%`)
-    .range((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE - 1)
-    .order("created_at", { ascending: false });
+    .range((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE - 1);
+
+  if (filter === SELECT_KEYS.newest) {
+    supaQuery = supaQuery.order("created_at", { ascending: false });
+  }
+
+  if (filter === SELECT_KEYS.oldest) {
+    supaQuery = supaQuery.order("created_at", { ascending: true });
+  }
+
+  if (filter === SELECT_KEYS.highest_score) {
+    supaQuery = supaQuery.order("score", { ascending: false });
+  }
+
+  if (filter === SELECT_KEYS.most_arguments) {
+    supaQuery = supaQuery.order("related_args_count", {
+      ascending: false,
+    });
+  }
+
+  const { data: args, count, error } = await supaQuery;
 
   if (error) {
     console.error("Error fetching arguments", error);
@@ -89,12 +101,15 @@ export default async function Home({ searchParams }) {
       <div className="w-0 sm:w-2/12" />
       <Suspense key={query + currentPage} fallback={<HomeLoading />}>
         <div className="w-full sm:w-8/12 md:w-6/12 flex-col mt-3 mr-3 space-y-2">
-          <p className="m-0 text-xs text-muted-foreground ">
-            {count > 0 && `${count} arguments`}
-            {count > 0 && " | "}
-            {count > 0 &&
-              `Page ${currentPage} of ${Math.ceil(count / PAGE_SIZE)} `}
-          </p>
+          <div className="flex justify-between items-center">
+            <p className="m-0 text-xs text-muted-foreground ">
+              {count > 0 && `${count} arguments`}
+              {count > 0 && " | "}
+              {count > 0 &&
+                `Page ${currentPage} of ${Math.ceil(count / PAGE_SIZE)} `}
+            </p>
+            <SelectComp />
+          </div>
           <>
             {args?.length > 0 ? (
               <>
@@ -112,8 +127,7 @@ export default async function Home({ searchParams }) {
                       <CardDescription className="text-xs overflow-hidden h-4 relative">
                         <span className="absolute animate-in slide-in-from-top fade-in-15 duration-300 ease-in-out">
                           {arg?.up_votes} upvote(s) | {arg?.down_votes}{" "}
-                          downvote(s) | {arg?.related_args?.[0]?.count}{" "}
-                          argument(s)
+                          downvote(s) | {arg?.related_args_count} argument(s)
                         </span>
                       </CardDescription>
                     </CardHeader>
@@ -141,14 +155,14 @@ export default async function Home({ searchParams }) {
                         className="flex items-center space-x-1 group"
                       >
                         <Avatar className="w-4 h-4">
-                          <AvatarImage src={arg?.users?.data?.avatar_url} />
+                          <AvatarImage src={arg?.user_data?.avatar_url} />
                           <AvatarFallback className="text-[6px]">
                             OM
                           </AvatarFallback>
                         </Avatar>
                         <p className="text-xs font-medium space-x-1 leading-none">
                           <span className="group-hover:underline">
-                            {arg?.users?.data?.name}
+                            {arg?.user_data?.name}
                           </span>
                           <span className="font-normal hidden sm:inline group-hover:underline">
                             {formatDistanceToNow(arg.created_at, {

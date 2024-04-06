@@ -107,6 +107,7 @@ const ArgumentsTable = ({ user, count, type }) => {
       const scrollHeight = ref.current.scrollHeight;
       ref.current.scroll({
         top: scrollHeight,
+        behavior: "smooth",
       });
     }
   }, [size]);
@@ -161,7 +162,10 @@ const ArgumentsTable = ({ user, count, type }) => {
               </TableRow>
             ) : null}
             {argumts?.map((arg) => (
-              <TableRow key={arg.id} className="odd:bg-white even:bg-muted">
+              <TableRow
+                key={arg.id}
+                className="odd:bg-muted even:bg-background"
+              >
                 <TableCell>
                   <Link
                     className="line-clamp-1 overflow-hidden break-all"

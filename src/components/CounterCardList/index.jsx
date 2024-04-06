@@ -8,7 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "../ui/button";
 import { Loader, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 const PAGE_SIZE = 2;
 
@@ -18,6 +18,7 @@ const CounterCardList = ({ argus: args }) => {
   const [argus, setArgus] = useState(() =>
     args.sort((a, b) => a.level - b.level)
   );
+  const searchParams = useSearchParams();
   const [renderedArgs, setRenderedArgs] = useState([]);
 
   const addToArgus = useCallback(({ arg, fallacies }) => {
@@ -94,8 +95,8 @@ const CounterCardList = ({ argus: args }) => {
   useEffect(() => {
     const handler = () => {
       setTimeout(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const argId = searchParams.get("arg");
+        const params = new URLSearchParams(searchParams);
+        const argId = params.get("arg");
         const el = document.getElementById(`#arg_${argId}`);
 
         if (el) {
@@ -112,11 +113,11 @@ const CounterCardList = ({ argus: args }) => {
             { duration: 2000, iterations: 1 }
           );
         }
-      }, 0);
+      }, 100);
     };
 
     handler();
-  }, []);
+  }, [searchParams]);
 
   return (
     <>
@@ -154,7 +155,7 @@ const GetCard = memo(
         </p>
         <ListCard
           autoScroll
-          className="w-11/12 sm:w-10/12 md:w-9/12 overflow-auto"
+          className="w-11/12 sm:w-10/12 md:w-9.5/12 overflow-auto"
           maxHeight="600px"
         >
           {argus.map((arg) => (

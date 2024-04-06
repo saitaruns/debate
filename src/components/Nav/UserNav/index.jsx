@@ -14,7 +14,9 @@ import { Button } from "../../ui/button";
 import { LogOut, Settings, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
+const supabase = createClient();
 export function UserNav({ user }) {
   const router = useRouter();
 
@@ -28,13 +30,21 @@ export function UserNav({ user }) {
     avatar_url = "",
   } = user?.user_metadata || {};
 
-  const handleLogout = async () => {
-    const supabase = createClient();
+  const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Error logging out:", error);
+    } else {
+      window.location.href = "/";
     }
-    router.push("/auth/login");
+  };
+
+  const handleLogout = async () => {
+    toast.promise(() => logout(), {
+      loading: "Logging out...",
+      success: "Logged out successfully",
+      error: "Error logging out",
+    });
   };
 
   return (

@@ -17,12 +17,15 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { BsGoogle } from "react-icons/bs";
 import { createClient } from "@/utils/supabase/client";
+import { useState } from "react";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
+const supabase = createClient();
 const getURL = () => {
   let url =
     process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
@@ -36,6 +39,8 @@ const getURL = () => {
 };
 
 export function LoginForm() {
+  const [loading, setLoading] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +54,8 @@ export function LoginForm() {
   }
 
   async function handleGoogleLogin() {
-    const supabase = createClient();
+    setLoading(true);
+
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -127,7 +133,19 @@ export function LoginForm() {
         onClick={handleGoogleLogin}
         className="w-full"
       >
-        <BsGoogle className="mr-2 h-4 w-4" /> Google
+        <span className="flex items-center">
+          {!loading ? (
+            <>
+              <span className="mr-2">Sign in with</span>
+              <BsGoogle className=" h-4 w-4" />
+            </>
+          ) : (
+            <>
+              <span className="mr-2">Signing in with google</span>
+              <Loader className="h-4 w-4 animate-spin" />
+            </>
+          )}
+        </span>
       </Button>
     </>
   );

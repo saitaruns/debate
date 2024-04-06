@@ -31,7 +31,7 @@ const NotificationBox = () => {
       }}
     >
       <DropdownMenuTrigger className="relative">
-        <Bell size={24} className="mr-1" />
+        <Bell size={24} className="mr-1 " />
         {dot && (
           <span className="absolute -top-[0.5px] right-1 rounded-full bg-primary size-[0.8rem] text-[0.6rem] text-white flex justify-center items-center">
             2
