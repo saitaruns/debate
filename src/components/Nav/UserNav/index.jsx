@@ -77,10 +77,10 @@ export function UserNav({ user }) {
             <User size={16} className="mr-2" />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          {/* <DropdownMenuItem className="cursor-pointer">
             <Settings size={16} className="mr-2" />
             Settings
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>

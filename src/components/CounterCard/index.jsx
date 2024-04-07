@@ -503,7 +503,7 @@ const ViewLink = ({ link }) => {
         </div>
       ) : null}
       <div className="flex gap-1 items-center px-3 pt-2">
-        <h1 className="text-lg font-medium line-clamp-1 mt-2">{data?.title}</h1>
+        <h1 className="text-lg font-medium line-clamp-1">{data?.title}</h1>
         <Link
           href={
             data?.content_urls?.desktop?.page ||

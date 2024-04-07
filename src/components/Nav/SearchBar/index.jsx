@@ -50,7 +50,6 @@ const SearchBar = () => {
     const { data, error } = await supabase
       .from("Argument")
       .select("title")
-      // .textSearch("title", query.trim())
       .ilike("title", `%${query.trim()}%`)
       .limit(5);
     setLoading(false);

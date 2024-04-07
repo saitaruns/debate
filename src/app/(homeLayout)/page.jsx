@@ -136,8 +136,8 @@ export default async function Home({ searchParams }) {
                         {arg?.argument}
                       </p>
                     </CardContent>
-                    <CardFooter className="flex justify-between px-4 pb-2">
-                      <div className="relative flex justify-center gap-1 items-center">
+                    <CardFooter className="flex justify-end px-4 pb-2">
+                      {/* <div className="relative flex justify-center gap-1 items-center">
                         <span className="relative flex size-3">
                           <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-400 opacity-75" />
                           <span className="relative inline-flex rounded-full size-full bg-green-500" />
@@ -149,7 +149,7 @@ export default async function Home({ searchParams }) {
                             active
                           </span>
                         </div>
-                      </div>
+                      </div> */}
                       <Link
                         href={`/profile/${arg?.user_id}`}
                         className="flex items-center space-x-1 group"
