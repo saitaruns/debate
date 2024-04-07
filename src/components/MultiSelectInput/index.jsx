@@ -13,11 +13,14 @@ import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import { BiPlusCircle } from "react-icons/bi";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaExternalLinkAlt } from "react-icons/fa";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useMediaQuery } from "@uidotdev/usehooks";
+import { ExternalLink, Info } from "lucide-react";
+import Link from "next/link";
+import { ViewLink } from "../CounterCard";
 
 const MultiSelectInput = React.forwardRef(
   ({ options, selectedValues, onChange, maxSelected, props }, ref) => {
@@ -87,7 +90,7 @@ const MultiSelectInput = React.forwardRef(
     return (
       <Popover {...props} modal>
         <PopoverTrigger asChild>{GetButton()}</PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start">
+        <PopoverContent className="w-[250px] p-0" align="start">
           <CommandBox
             options={options}
             selectedValues={selectedValues}
@@ -123,6 +126,11 @@ const CommandBox = ({ options, selectedValues, onChange, maxSelected }) => {
                 layout
                 key={option.value}
                 layoutId={option.value}
+                className={cn({
+                  "bg-primary-foreground/70": selectedValues.includes(
+                    option.value
+                  ),
+                })}
                 onSelect={() => {
                   if (
                     !selectedValues.includes(option.value) &&
@@ -140,15 +148,27 @@ const CommandBox = ({ options, selectedValues, onChange, maxSelected }) => {
                   );
                 }}
               >
-                <FaCheck
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    selectedValues.includes(option.value)
-                      ? "opacity-100"
-                      : "opacity-0"
+                <span className="w-7/12">{option.label}</span>
+                <span className="w-4/12 text-center">
+                  {selectedValues.includes(option.value) && (
+                    <Badge variant="secondary">Selected</Badge>
                   )}
-                />
-                {option.label}
+                </span>
+                <Popover key={option.value}>
+                  <PopoverTrigger
+                    asChild
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <Info className="w-4 h-4" />
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0" align="center" side="bottom">
+                    <ViewLink
+                      link={`https://en.wikipedia.org/api/rest_v1/page/summary/${option.label}`}
+                    />
+                  </PopoverContent>
+                </Popover>
               </MotionCommandItem>
             ))}
         </MotionCommandGroup>

@@ -467,7 +467,7 @@ const fetcher = async (url) => {
 
   return res.json();
 };
-const ViewLink = ({ link }) => {
+export const ViewLink = ({ link }) => {
   const { data, error, isLoading } = useSWR(link, fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
