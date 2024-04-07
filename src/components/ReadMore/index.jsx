@@ -1,6 +1,6 @@
 "use client";
 
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import React, { useState, useRef, useLayoutEffect } from "react";
 
 const ReadMore = ({ children: text, className, minLines = 3 }) => {
@@ -27,18 +27,21 @@ const ReadMore = ({ children: text, className, minLines = 3 }) => {
     setIsTruncated(!isTruncated);
   };
 
-  const pClass = clsx(
-    isTruncated && `line-clamp-${minLines}`,
-    "text-sm overflow-hidden break-all w-full"
-  );
-
   if (!text) return null;
 
   return (
     <div className={className}>
-      <p ref={paragraphRef} className={pClass}>
+      <span
+        ref={paragraphRef}
+        className={cn(
+          "w-11/12 text-sm overflow-hidden break-all hyphens-auto inline-block",
+          {
+            [`line-clamp-${minLines}`]: isTruncated,
+          }
+        )}
+      >
         {text}
-      </p>
+      </span>
       {overflown && (
         <button
           onClick={toggleTruncation}

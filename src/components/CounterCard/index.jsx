@@ -344,19 +344,14 @@ const CounterCard = ({ arg, addToArgus, className }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="end">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    className="cursor-pointer gap-2"
-                    onClick={() => {
-                      copyToClipboard(
-                        location.host + location.pathname + `?arg=${arg.id}`
-                      );
-                      toast("Link copied to clipboard", {
-                        type: "success",
-                      });
-                    }}
+                  <DialogTrigger
+                    asChild
+                    onClick={() => openDialog(Dialogs.counterFormDialog)}
                   >
-                    <Link2 size={16} /> Share
-                  </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer gap-2">
+                      <LucideSword size={16} /> Counter
+                    </DropdownMenuItem>
+                  </DialogTrigger>
                   <DialogTrigger
                     asChild
                     onClick={() => openDialog(Dialogs.supportFormDialog)}
@@ -376,14 +371,19 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                       </DropdownMenuItem>
                     </DialogTrigger>
                   ) : null}
-                  <DialogTrigger
-                    asChild
-                    onClick={() => openDialog(Dialogs.counterFormDialog)}
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onClick={() => {
+                      copyToClipboard(
+                        location.host + location.pathname + `?arg=${arg.id}`
+                      );
+                      toast("Link copied to clipboard", {
+                        type: "success",
+                      });
+                    }}
                   >
-                    <DropdownMenuItem className="cursor-pointer gap-2">
-                      <LucideSword size={16} /> Counter
-                    </DropdownMenuItem>
-                  </DialogTrigger>
+                    <Link2 size={16} /> Share
+                  </DropdownMenuItem>
                   <DialogTrigger
                     asChild
                     onClick={() => openDialog(Dialogs.reportFormDialog)}
