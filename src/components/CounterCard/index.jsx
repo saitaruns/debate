@@ -31,6 +31,7 @@ import { MdOutlineReportProblem } from "react-icons/md";
 import {
   ArrowBigDown,
   ArrowBigUp,
+  Edit,
   ExternalLink,
   Link2,
   LucideSword,
@@ -53,6 +54,7 @@ const Dialogs = {
   supportFormDialog: "supportForm",
   counterFormDialog: "counterForm",
   reportFormDialog: "reportForm",
+  editFormDialog: "editForm",
 };
 
 const supabase = createClient();
@@ -195,6 +197,14 @@ const CounterCard = ({ arg, addToArgus, className }) => {
         arg={arg}
         closeDialog={() => setOpen(false)}
         isCounter
+        addToArgus={addToArgus}
+      />
+    ),
+    editForm: (
+      <ArgumentForm
+        arg={arg}
+        closeDialog={() => setOpen(false)}
+        isEdit
         addToArgus={addToArgus}
       />
     ),
@@ -355,6 +365,17 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                       <FaShieldAlt size={16} /> Defend
                     </DropdownMenuItem>
                   </DialogTrigger>
+                  {arg?.user_id === user?.id ? (
+                    <DialogTrigger
+                      asChild
+                      onClick={() => openDialog(Dialogs.editFormDialog)}
+                    >
+                      <DropdownMenuItem className="cursor-pointer gap-2">
+                        <Edit size={16} />
+                        Edit
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                  ) : null}
                   <DialogTrigger
                     asChild
                     onClick={() => openDialog(Dialogs.counterFormDialog)}

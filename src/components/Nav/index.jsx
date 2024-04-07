@@ -72,7 +72,7 @@ const Nav = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <ArgumentForm closeDialog={() => setOpen(false)} />
+            <ArgumentForm closeDialog={() => setOpen(false)} isNew />
           </DialogContent>
         </Dialog>
         <div className="sm:flex-1 flex justify-end items-center gap-2 mr-3 relative">

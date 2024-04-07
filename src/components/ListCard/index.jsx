@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { useMotionValueEvent, useScroll } from "framer-motion";
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
 const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {

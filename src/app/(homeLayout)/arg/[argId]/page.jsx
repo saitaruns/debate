@@ -18,12 +18,5 @@ export default async function Argument({
     console.error("Error fetching argument:", error);
   }
 
-  return (
-    <>
-      <h1 className="text-xl font-normal mt-8 mb-5 break-all ">
-        {args?.[0]?.title}
-      </h1>
-      <CounterCardList argus={args} />
-    </>
-  );
+  return <CounterCardList argus={args} />;
 }

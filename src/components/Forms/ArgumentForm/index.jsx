@@ -77,6 +77,8 @@ const ArgumentForm = ({
   closeDialog = () => {},
   isCounter = false,
   isSupport = false,
+  isNew = false,
+  isEdit = false,
   addToArgus = () => {},
 }) => {
   const [textareaRows, setTextareaRows] = useState(1);
@@ -89,8 +91,10 @@ const ArgumentForm = ({
     "You are about to submit your argument"
   );
 
+  const isEditMain = isEdit && !arg?.counter_to && !arg?.support_to;
+
   const counterFormSchema = z.object({
-    ...(!isCounter && !isSupport ? { title: z.string().min(5) } : {}),
+    ...(isEditMain || isNew ? { title: z.string().min(5) } : {}),
     arg: z
       .string()
       .min(
@@ -130,10 +134,20 @@ const ArgumentForm = ({
   const counterForm = useForm({
     resolver: zodResolver(counterFormSchema),
     defaultValues: {
-      ...(!isCounter ? { title: "" } : {}),
-      arg: "",
-      evidence: [{ source: "" }],
-      ...(isCounter ? { fallacies: [] } : {}),
+      ...(isEdit
+        ? {
+            ...(isEditMain ? { title: arg.title } : {}),
+            arg: arg?.argument,
+            evidence: [
+              ...arg?.evidence.map((e) => ({ source: JSON.parse(e).source })),
+            ],
+          }
+        : {
+            ...(isNew ? { title: "" } : {}),
+            arg: "",
+            evidence: [{ source: "" }],
+            ...(isCounter ? { fallacies: [] } : {}),
+          }),
     },
   });
 
@@ -144,7 +158,7 @@ const ArgumentForm = ({
       const evidenceLength =
         counterForm
           .getValues("evidence")
-          .filter((e) => LINK_REGEX.test(e.source.trim()))?.length || 0;
+          .filter((e) => LINK_REGEX.test(e?.source?.trim()))?.length || 0;
 
       const fallaciesLength = counterForm.getValues("fallacies")?.length || 0;
 
@@ -188,9 +202,10 @@ const ArgumentForm = ({
       error,
     } = await supabase
       .from("Argument")
-      .insert([
+      .upsert([
         {
-          ...(!isCounter && !isSupport ? { title: data.title } : {}),
+          ...(isEdit ? { id: arg.id } : null),
+          ...(isNew || isEditMain ? { title: data.title } : {}),
           argument: data.arg,
           evidence: data.evidence,
           ...(isCounter ? { counter_to: arg.id } : {}),
@@ -299,7 +314,12 @@ const ArgumentForm = ({
         })}
       >
         <DialogHeader className="mb-3">
-          <DialogTitle>{isCounter ? "Counter" : ""} Argument</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Edit Argument" : null}
+            {isCounter ? "Counter Argument" : null}
+            {isSupport ? "Support Argument" : null}
+            {isNew ? "New Argument" : null}
+          </DialogTitle>
           <DialogDescription>
             Make your argument with good explanation and reliable evidence.
           </DialogDescription>
@@ -310,9 +330,9 @@ const ArgumentForm = ({
               minLines={1}
               className="border-l-4 border-slate-700 p-2 bg-slate-300 dark:bg-slate-800 dark:border-slate-900"
             >
-              {arg?.argument}
+              {!isEdit ? arg?.argument : null}
             </ReadMore>
-            {!isCounter && !isSupport ? (
+            {isEditMain || isNew ? (
               <FormField
                 control={counterForm.control}
                 name="title"
@@ -333,7 +353,13 @@ const ArgumentForm = ({
               render={({ field }) => (
                 <FormItem className="mx-1">
                   <FormLabel className="flex w-full justify-between">
-                    Your Counter Argument
+                    {isEdit
+                      ? "Edit Argument"
+                      : isCounter
+                      ? "Counter Argument"
+                      : isSupport
+                      ? "Support Argument"
+                      : "New Argument"}
                     <span>
                       {field.value.trim().length}/{MAX_ARG_LENGTH}
                     </span>

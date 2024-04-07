@@ -41,6 +41,19 @@ const CounterCardList = ({ argus: args }) => {
           }
           return a;
         })
+        .reduce((acc, a) => {
+          const index = acc.findIndex((arg) => arg.id === a.id);
+          if (index !== -1) {
+            acc[index] = {
+              ...acc[index],
+              argument: a.argument,
+              title: a.title,
+              evidence: a.evidence,
+            };
+            return acc;
+          }
+          return [...acc, a];
+        }, [])
         .sort((a, b) => a.level - b.level);
     });
   }, []);
@@ -121,6 +134,9 @@ const CounterCardList = ({ argus: args }) => {
 
   return (
     <>
+      <h1 className="text-xl font-normal mt-8 mb-5 break-all ">
+        {argus?.[0]?.title}
+      </h1>
       {renderedArgs.map((args) => {
         return (
           <GetCard
@@ -142,6 +158,7 @@ const GetCard = memo(
 
     const argLevel = argus[0].level;
     const levelCount = argus[0].level_count;
+    console.log("GetCard", argus, argLevel, levelCount);
 
     return (
       <div
