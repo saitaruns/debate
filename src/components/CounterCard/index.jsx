@@ -211,12 +211,28 @@ const CounterCard = ({ arg, addToArgus, className }) => {
     reportForm: <ReportForm closeDialog={() => setOpen(false)} />,
   };
 
+  const handleFocusCard = (hash) => {
+    const el = document.getElementById(hash);
+    el.scrollIntoView({
+      block: "center",
+      inline: "center",
+      behavior: "smooth",
+    });
+    el.animate(
+      [
+        { backgroundColor: "hsl(var(--primary) / 0.1)" },
+        { backgroundColor: "initial" },
+      ],
+      { duration: 2000, iterations: 1 }
+    );
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
           className={cn(
-            "relative mb-2 shadow-md hover:opacity-100 transition-all delay-200",
+            "relative my-2 shadow-md hover:opacity-100 transition-all delay-200",
             {
               "border-l-4 border-green-700": searchParams.has("arg", arg.id),
               "opacity-55": voteCount < -10,
@@ -225,7 +241,21 @@ const CounterCard = ({ arg, addToArgus, className }) => {
           )}
           id={`#arg_${arg.id}`}
         >
-          <CardContent className="flex p-3 pt-6 pb-0 items-start">
+          <CardContent className="flex p-3 pt-6 pb-0 items-start relative">
+            <Badge
+              variant="shad"
+              className="mb-2 absolute -top-2 right-1 bg-background"
+              onClick={() => {
+                copyToClipboard(
+                  location.host + location.pathname + `?arg=${arg.id}`
+                );
+                toast("Link copied to clipboard", {
+                  type: "success",
+                });
+              }}
+            >
+              #{arg.id}
+            </Badge>
             <div className="flex flex-col pr-2 items-center">
               <ArrowBigUp
                 size={24}
@@ -265,10 +295,10 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                 <div className="text-xs text-slate-500">
                   countering{" "}
                   <Badge
-                    variant="success"
+                    variant="shad"
                     className="cursor-pointer"
                     onClick={() => {
-                      console.log("clicked");
+                      handleFocusCard(`#arg_${arg.counter_to}`);
                     }}
                   >
                     #{arg?.counter_to}
@@ -279,10 +309,10 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                 <div className="text-xs text-slate-500">
                   supporting{" "}
                   <Badge
-                    variant="success"
+                    variant="shad"
                     className="cursor-pointer"
                     onClick={() => {
-                      console.log("clicked");
+                      handleFocusCard(`#arg_${arg.support_to}`);
                     }}
                   >
                     #{arg?.support_to}

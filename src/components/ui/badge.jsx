@@ -27,6 +27,7 @@ const badgeVariants = cva(
           "border border-purple-600 bg-purple-100 text-purple-600 divide-purple-600 dark:bg-purple-600 dark:text-purple-100 dark:divide-purple-100",
         other:
           "border border-gray-600 bg-gray-100 text-gray-600 divide-gray-600 dark:bg-gray-600 dark:text-gray-100dark:divide-gray-100",
+        shad: "shadow-sm cursor-pointer  active:shadow-inner",
       },
     },
     defaultVariants: {

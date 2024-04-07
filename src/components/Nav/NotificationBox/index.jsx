@@ -22,7 +22,6 @@ const PAGE_SIZE = 2;
 const supabase = createClient();
 
 const fetcher = async (page) => {
-  console.log(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
   const { data, error } = await supabase
     .from("Notifications")
     .select(

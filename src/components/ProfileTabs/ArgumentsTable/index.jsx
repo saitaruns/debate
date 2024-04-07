@@ -32,8 +32,6 @@ const PAGE_SIZE = 2;
 const ArgumentsTable = ({ user, count, type }) => {
   const ref = useRef(null);
   const fetcher = async ([key, page]) => {
-    console.log("key", key);
-    console.log(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1);
     const query = supabase
       .from("Argument")
       .select(
@@ -99,8 +97,6 @@ const ArgumentsTable = ({ user, count, type }) => {
   const argumts = useMemo(() => {
     return data ? data.flat() : [];
   }, [data]);
-
-  console.log("argumts", argumts);
 
   useEffect(() => {
     if (ref.current) {

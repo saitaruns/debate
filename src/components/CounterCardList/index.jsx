@@ -158,7 +158,6 @@ const GetCard = memo(
 
     const argLevel = argus[0].level;
     const levelCount = argus[0].level_count;
-    console.log("GetCard", argus, argLevel, levelCount);
 
     return (
       <div
