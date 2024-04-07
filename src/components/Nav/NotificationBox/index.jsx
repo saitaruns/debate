@@ -121,7 +121,7 @@ const NotificationBox = () => {
       }}
     >
       <DropdownMenuTrigger className="relative">
-        <Bell size={24} className="mr-1 " />
+        <Bell size={24} className="mr-1" />
         {!!dot && (
           <span className="absolute -top-[0.5px] right-1 rounded-full bg-primary size-[0.8rem] text-[0.6rem] text-white flex justify-center items-center">
             {dot}
@@ -137,7 +137,7 @@ const NotificationBox = () => {
         </p>
 
         <ListCard
-          className="overflow-auto relative w-[calc(100vw-2rem)] sm:w-fit"
+          className="overflow-auto relative w-[calc(100vw-1rem)] sm:w-fit"
           maxHeight="400px"
         >
           {!isLoadingMore && notifications.length <= 0 ? (
@@ -152,7 +152,7 @@ const NotificationBox = () => {
               key={notification.id}
               variant="ghost"
               className={cn(
-                "h-max border-b last:border-0 border-border/40 hover:bg-primary/20 justify-start",
+                "h-max border-b last:border-0 border-border/40 hover:bg-primary/20 items-start",
                 notification?.read ? "bg-background" : "bg-primary/10"
               )}
               onClick={() => handleNotificationClick(notification)}
