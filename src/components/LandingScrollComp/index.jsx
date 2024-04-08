@@ -92,8 +92,8 @@ const content = [
 ];
 export function LandingScrollComp({ className }) {
   return (
-    <section className={cn("py-10 bg-foreground", className)}>
-      <h1 className="text-4xl font-bold text-center text-slate-100 mt-10 mb-20">
+    <section className={cn("py-10 bg-foreground dark:bg-secondary", className)}>
+      <h1 className="text-4xl font-bold text-center text-slate-100  mt-10 mb-20">
         How it works
       </h1>
       <StickyScroll content={content} />

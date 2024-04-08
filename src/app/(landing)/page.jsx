@@ -1,5 +1,6 @@
 import ArgumentCard from "@/components/ArgumentCard";
 import { LandingScrollComp } from "@/components/LandingScrollComp";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,11 +77,8 @@ export default async function LandingPage() {
             the world. Challenge your beliefs, learn new perspectives, and
             sharpen your critical thinking skills.
           </p>
-          <Link
-            className="px-4 py-2 text-xs sm:text-sm text-white bg-foreground rounded-md w-fit"
-            href={"/auth/login"}
-          >
-            Get Started
+          <Link href={"/auth/login"} passHref>
+            <Button>Get Started</Button>
           </Link>
         </div>
         <div className="mt-12 sm:mt-0 flex-1 sm:w-7/12 flex flex-col py-5 sm:p-5 sm:scale-[0.8]">
