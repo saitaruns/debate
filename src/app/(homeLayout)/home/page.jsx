@@ -21,7 +21,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import HomeLoading from "./homeloading";
+import HomeLoading from "../homeloading";
 import Image from "next/image";
 import SelectComp from "@/components/SelectComp";
 import { SELECT_KEYS } from "@/constants";

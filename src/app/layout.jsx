@@ -22,7 +22,6 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {children}
-
           <footer className="bg-background py-6 border-t  mt-14">
             <div className="container flex flex-col items-center justify-between p-6 mx-auto space-y-4 sm:space-y-0 sm:flex-row">
               <Link href="#">

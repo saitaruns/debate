@@ -35,7 +35,7 @@ export function UserNav({ user }) {
     if (error) {
       console.error("Error logging out:", error);
     } else {
-      window.location.href = "/";
+      window.location.href = "/home";
     }
   };
 

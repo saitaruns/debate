@@ -54,7 +54,7 @@ const Nav = () => {
           scrollState && "shadow-md"
         )}
       >
-        <Link href="/" className="w-fit sm:w-2/12 text-right p-2">
+        <Link href="/home" className="w-fit sm:w-2/12 text-right p-2">
           <MdOutlineSort className="sm:hidden ml-2" size={24} />
           <h1 className="hidden sm:block">Debate</h1>
         </Link>

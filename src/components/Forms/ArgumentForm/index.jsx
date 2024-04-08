@@ -46,30 +46,6 @@ const MIN_ARG_LENGTH = 50;
 const MAX_FALLACIES = 4;
 const LINK_REGEX = /(https?:\/\/[^\s]+(?:\.[^\s]+)+)/;
 
-const FALLACIES = [
-  { label: "Ad Hominem", value: "ad-hominem" },
-  { label: "Strawman", value: "strawman" },
-  { label: "False Dilemma", value: "false-dilemma" },
-  { label: "Slippery Slope", value: "slippery-slope" },
-  { label: "Appeal to Authority", value: "appeal-to-authority" },
-  { label: "Appeal to Ignorance", value: "appeal-to-ignorance" },
-  { label: "Circular Reasoning", value: "circular-reasoning" },
-  { label: "Hasty Generalization", value: "hasty-generalization" },
-  { label: "Post Hoc Ergo Propter Hoc", value: "post-hoc-ergo-propter-hoc" },
-  { label: "Red Herring", value: "red-herring" },
-  { label: "Appeal to Emotion", value: "appeal-to-emotion" },
-  { label: "Tu Quoque", value: "tu-quoque" },
-  { label: "False Cause", value: "false-cause" },
-  { label: "Begging the Question", value: "begging-the-question" },
-  { label: "Appeal to Nature", value: "appeal-to-nature" },
-  { label: "Composition and Division", value: "composition-and-division" },
-  { label: "No True Scotsman", value: "no-true-scotsman" },
-  { label: "Genetic Fallacy", value: "genetic-fallacy" },
-  { label: "Equivocation", value: "equivocation" },
-  { label: "Appeal to Tradition", value: "appeal-to-tradition" },
-  { label: "Bandwagon Fallacy", value: "bandwagon-fallacy" },
-];
-
 const supabase = createClient();
 
 const ArgumentForm = ({
