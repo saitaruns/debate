@@ -90,7 +90,7 @@ const SearchBar = () => {
       params.delete("query");
       params.delete("page");
     }
-    replace(`${location.origin}?${params.toString()}`);
+    replace(`${location.origin}/home?${params.toString()}`);
   }
 
   const handleSelect = (value) => {

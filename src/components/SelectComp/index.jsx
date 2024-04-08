@@ -21,6 +21,12 @@ import {
 } from "lucide-react";
 
 const SelectComp = () => {
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+  const params = new URLSearchParams(searchParams);
+
+  const filter = searchParams.get("filter");
+
   const SELECT_VALUES = [
     {
       value: SELECT_KEYS.most_arguments,
@@ -44,17 +50,11 @@ const SelectComp = () => {
     },
   ];
 
-  const searchParams = useSearchParams();
-  const { replace } = useRouter();
-  const params = new URLSearchParams(searchParams);
-
-  const filter = searchParams.get("filter");
-
   return (
     <Select
       onValueChange={(val) => {
         params.set("filter", val);
-        replace(`${location.origin}?${params.toString()}`);
+        replace(`${location.origin}/home?${params.toString()}`);
       }}
       value={filter || "newest"}
     >
