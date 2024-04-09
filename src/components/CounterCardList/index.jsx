@@ -171,7 +171,7 @@ const GetCard = memo(
         </p>
         <ListCard
           autoScroll
-          className="w-11/12 sm:w-10/12 md:w-9.5/12 overflow-auto"
+          className="w-11/12 sm:w-10/12 md:w-8/12 overflow-auto"
           maxHeight="600px"
         >
           {argus.map((arg) => (

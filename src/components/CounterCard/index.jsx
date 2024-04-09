@@ -244,7 +244,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
           <CardContent className="flex p-3 pt-6 pb-0 items-start relative">
             <Badge
               variant="shad"
-              className="mb-2 absolute -top-2 right-1 bg-background"
+              className="mb-2 absolute -top-2 right-1 bg-background select-none"
               onClick={() => {
                 copyToClipboard(
                   location.host + location.pathname + `?arg=${arg.id}`
@@ -322,7 +322,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
               <ReadMore minLines={3} className="mb-3">
                 {arg?.argument}
               </ReadMore>
-              <ul className="w-32 sm:w-96">
+              <ul className="w-32 sm:w-48 md:w-64">
                 {arg?.evidence?.map((ev) => {
                   const evidence = JSON.parse(ev);
                   return (

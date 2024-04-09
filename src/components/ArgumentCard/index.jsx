@@ -24,7 +24,7 @@ const ArgumentCard = ({ className, ...arg }) => {
       <CardContent className="flex p-3 pt-6 pb-0 items-start relative">
         <Badge
           variant="shad"
-          className="mb-2 absolute -top-2 right-1 bg-background"
+          className="mb-2 absolute -top-2 right-1 bg-background select-none"
         >
           #{arg.id}
         </Badge>
