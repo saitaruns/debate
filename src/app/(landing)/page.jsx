@@ -64,8 +64,8 @@ export default async function LandingPage() {
       <section
         className={cn(
           "px-10 sm:px-10 lg:px-30",
-          "dark:bg-grid-white/[0.2] bg-grid-black/[0.2]",
-          "relative"
+          "dark:bg-grid-white/[0.1] bg-grid-black/[0.1]",
+          "relative h-screen"
         )}
       >
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_top,transparent_20%,black)]" />
@@ -77,7 +77,7 @@ export default async function LandingPage() {
           </div>
         </nav>
         <div className="flex sm:items-center flex-col sm:flex-row relative">
-          <div className="flex-1 flex lg:ml-40 flex-col space-y-4 [&>*]:animate-in [&>*]:slide-in-from-bottom-9 [&>*]:fade-in-0 [&>*]:delay-300 [&>*]:duration-500">
+          <div className="flex-1 flex lg:ml-40 flex-col space-y-4">
             <TextGenerateEffect
               className="text-2xl sm:text-4xl font-bold mt-12 sm:mt-0"
               words={"Welcome to Debate"}
@@ -116,7 +116,7 @@ export default async function LandingPage() {
         </div>
       </section>
       <LandingScrollComp />
-      <section className="md:px-40 px-10 py-20">
+      <section className="md:px-40 px-10 py-20 h-screen flex justify-center items-center">
         <div className="flex flex-col sm:flex-row gap-7 mt-10">
           {[
             {
@@ -144,7 +144,7 @@ export default async function LandingPage() {
                   src={item.image_url}
                   alt="svg"
                   fill
-                  objectFit="contain"
+                  style={{ objectFit: "contain" }}
                 />
               </div>
               <h1 className="text-2xl font-bold mb-3">{item.title}</h1>
