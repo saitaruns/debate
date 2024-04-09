@@ -1,6 +1,5 @@
 import React from "react";
 
-import ReadMore from "@/components/ReadMore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { formatDistance } from "date-fns";
 import { cn } from "@/lib/utils";
 import { variantReturner } from "@/constants";
 import Link from "next/link";
+import { TextGenerateEffect } from "../ui/text-generate-effect";
 
 const ArgumentCard = ({ className, ...arg }) => {
   return (
