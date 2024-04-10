@@ -116,7 +116,7 @@ const SearchBar = () => {
       />
       <CommandList
         className={cn(
-          "absolute top-full bg-background w-full border shadow-lg",
+          "absolute top-full bg-background w-full border shadow-lg rounded-md",
           "h-[var(--cmdk-list-height)] transition-[height] duration-75 ease-in-out",
           {
             hidden: !sugOpen || search.length === 0,
@@ -124,12 +124,12 @@ const SearchBar = () => {
         )}
       >
         <CommandGroup
-          className={cn("p-1 rounded-3xl", {
+          className={cn("p-0 ", {
             hidden: search.length === 0,
           })}
         >
           <CommandItem
-            className="px-3"
+            className="px-3 rounded"
             key={search}
             value={search}
             onSelect={handleSelect}
@@ -153,7 +153,7 @@ const SearchBar = () => {
               key={item.value}
               value={item.value}
               onSelect={handleSelect}
-              className="px-3"
+              className="px-3 rounded-none"
             >
               <SearchIcon className="size-3 mr-2 text-slate-400" />
               <span

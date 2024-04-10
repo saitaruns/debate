@@ -232,10 +232,10 @@ const CounterCard = ({ arg, addToArgus, className }) => {
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
           className={cn(
-            "relative my-2 shadow-md hover:opacity-100 transition-all delay-200",
+            "relative my-2  hover:opacity-100 transition-all delay-200",
             {
               "border-l-4 border-green-700": searchParams.has("arg", arg.id),
-              "opacity-55": voteCount < -10,
+              // "opacity-55": voteCount < -10,
             },
             className
           )}
@@ -341,7 +341,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
                   );
                 })}
               </ul>
-              <div className="mt-2">
+              <div className="mt-2 w-11/12">
                 {arg?.fallacies?.map((fallacy) => (
                   <Popover key={fallacy.id}>
                     <PopoverTrigger>
@@ -523,12 +523,16 @@ export const ViewLink = ({ link }) => {
   return (
     <>
       {data.thumbnail ? (
-        <div className="w-full h-44 relative">
+        <div className="w-full h-44 relative rounded-xl">
           <Image
             src={data?.thumbnail?.source}
             alt={data?.title}
             fill
-            objectFit="cover"
+            className="rounded-t-xl"
+            style={{
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
           />
         </div>
       ) : null}

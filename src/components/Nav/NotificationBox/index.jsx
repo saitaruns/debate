@@ -151,7 +151,7 @@ const NotificationBox = () => {
               key={notification.id}
               variant="ghost"
               className={cn(
-                "h-max border-b last:border-0 border-border/40 hover:bg-primary/20 items-start",
+                "h-max border-b last:border-0 border-border/40 hover:bg-primary/20 items-start rounded-none",
                 notification?.read ? "bg-background" : "bg-primary/10"
               )}
               onClick={() => handleNotificationClick(notification)}
@@ -194,7 +194,7 @@ const NotificationBox = () => {
           ) : null}
           {!isReachingEnd ? (
             <Button
-              className="w-full"
+              className="w-full rounded-none"
               variant="outline"
               onClick={() => setSize(size + 1)}
             >

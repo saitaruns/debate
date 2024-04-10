@@ -166,7 +166,7 @@ const GetCard = memo(
           argLevel % 2 === 0 ? "items-start" : "items-end"
         )}
       >
-        <p className="text-xs mb-2 text-slate-500">
+        <p className="text-xs mb-1 text-slate-500">
           {argus.length}/{levelCount} arguments
         </p>
         <ListCard

@@ -116,9 +116,9 @@ export default async function Home({ searchParams }) {
                 {args?.map((arg) => (
                   <Card
                     key={arg.id}
-                    className="w-full shadow-none border-0 border-b [&>div]:pl-0"
+                    className="w-full shadow-none border-0 border-b [&>div]:pl-0 rounded-none bg-transparent"
                   >
-                    <CardHeader className="p-3">
+                    <CardHeader className="p-3 space-y-0.5">
                       <Link href={`/arg/${arg.id}`} className="hover:underline">
                         <CardTitle className="text-md font-medium truncate">
                           {arg?.title}

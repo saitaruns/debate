@@ -191,7 +191,7 @@ const Profile = async ({ params: { profileId } }) => {
               <TabsList>
                 <TabsTrigger value="main">Arguments</TabsTrigger>
                 <TabsTrigger value="support">Support Arguments</TabsTrigger>
-                <TabsTrigger value="counter">Counter Arguments</TabsTrigger>
+                <TabsTrigger value="counter">Counters</TabsTrigger>
               </TabsList>
               {["main", "support", "counter"].map((tab) => (
                 <TabsContent value={tab} key={tab}>
