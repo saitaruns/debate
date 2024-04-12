@@ -17,6 +17,7 @@ import SearchBar from "./SearchBar";
 import NotificationBox from "./NotificationBox";
 import { AuthContext } from "../AuthContext";
 import { cva } from "class-variance-authority";
+import CreateArgumentForm from "../Forms/CreateArgumentForm";
 
 const Nav = () => {
   const [scrollState, setScrollState] = useState(false);
@@ -72,7 +73,8 @@ const Nav = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <ArgumentForm closeDialog={() => setOpen(false)} isNew />
+            {/* <ArgumentForm closeDialog={() => setOpen(false)} isNew /> */}
+            <CreateArgumentForm />
           </DialogContent>
         </Dialog>
         <div className="sm:flex-1 flex justify-end items-center gap-2 mr-3 relative">
