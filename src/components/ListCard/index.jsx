@@ -1,10 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import clsx from "clsx";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 
 const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
   const ref = useRef(null);
@@ -26,7 +24,7 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
         if (autoScroll) {
           const lastChild = ref.current.lastChild;
           const el =
-            lastChild.tagName.toLowerCase() === "button"
+            lastChild.id === "show-more"
               ? lastChild.previousElementSibling
               : lastChild;
 
@@ -69,7 +67,7 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
   });
 
   return (
-    <ScrollArea className={cn(className, "relative ")}>
+    <div className={cn(className, "relative")}>
       {isShadow && (
         <div
           className={cn(
@@ -106,7 +104,7 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
           )}
         />
       )}
-    </ScrollArea>
+    </div>
   );
 };
 

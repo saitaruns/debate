@@ -92,6 +92,11 @@ const FALLACIES = [
   { label: "Bandwagon Fallacy", value: "bandwagon-fallacy" },
 ];
 
+const FORM_TYPE = {
+  COUNTER: "COUNTER",
+  SUPPORT: "SUPPORT",
+};
+
 export {
   relevanceFallacies,
   presumptionFallacies,
@@ -102,4 +107,5 @@ export {
   SELECT_KEYS,
   variantReturner,
   FALLACIES,
+  FORM_TYPE,
 };

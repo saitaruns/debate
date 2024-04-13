@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import DOMPurify from "dompurify";
 import React, { useState, useRef, useLayoutEffect } from "react";
 
 const ReadMore = ({ children: text, className, minLines = 3 }) => {
@@ -34,19 +35,21 @@ const ReadMore = ({ children: text, className, minLines = 3 }) => {
       <span
         ref={paragraphRef}
         className={cn(
+          "prose dark:prose-dark",
           "w-11/12 text-sm overflow-hidden break-all hyphens-auto inline-block",
           {
             [`line-clamp-${minLines}`]: isTruncated,
           }
         )}
-      >
-        {text}
-      </span>
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(text),
+        }}
+      ></span>
       {overflown && (
         <button
           onClick={toggleTruncation}
           type="button"
-          className="text-[14px] w-fit hover:underline font-medium"
+          className="text-[14px] w-fit hover:underline font-medium block"
         >
           {isTruncated ? "Read more" : "Read less"}
         </button>

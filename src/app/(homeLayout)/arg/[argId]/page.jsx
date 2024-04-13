@@ -10,7 +10,7 @@ export default async function Argument({
 
   let { data: args, error } = await supabase.rpc("get_argument_rows", {
     a_id: argId,
-    m_arg_id: arg,
+    m_arg_id: arg || null,
     n: 2,
   });
 

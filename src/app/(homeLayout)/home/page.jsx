@@ -25,6 +25,19 @@ import HomeLoading from "../homeloading";
 import Image from "next/image";
 import SelectComp from "@/components/SelectComp";
 import { SELECT_KEYS } from "@/constants";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const RenderHTML = dynamic(() => import("@/components/RenderHTML"), {
+  ssr: false,
+  loading: () => (
+    <div className="space-y-1">
+      <Skeleton className="h-3 w-4/12" />
+      <Skeleton className="h-2 w-8/12" />
+      <Skeleton className="h-2 w-8/12" />
+    </div>
+  ),
+});
 
 const PAGE_SIZE = 10;
 
@@ -132,9 +145,7 @@ export default async function Home({ searchParams }) {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-3 pt-0">
-                      <p className="line-clamp-2 text-xs break-all">
-                        {arg?.argument}
-                      </p>
+                      <RenderHTML html={arg?.argument} />
                     </CardContent>
                     <CardFooter className="flex justify-end px-4 pb-2">
                       {/* <div className="relative flex justify-center gap-1 items-center">

@@ -1,6 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require("tailwindcss/defaultTheme");
-const colors = require("tailwindcss/colors");
 const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
@@ -81,6 +79,26 @@ module.exports = {
       },
       transitionTimingFunction: {
         spring: "cubic-bezier(0.175, 0.885, 0.320, 1.275)",
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            "*": {
+              lineHeight: "1.25",
+            },
+            h3: {
+              fontWeight: "300",
+              lineHeight: "1.2",
+            },
+            a: {
+              color: "hsl(var(--primary))",
+              textDecoration: "none",
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            },
+          },
+        },
       },
     },
   },

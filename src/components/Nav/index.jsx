@@ -28,17 +28,17 @@ const Nav = () => {
     setScrollState(latest > 0);
   });
 
-  const [ConfirmationDialog, confirm] = useConfirm(
-    "Are you sure?",
-    "This action cannot be undone",
-    "Close"
-  );
+  const [ConfirmationDialog, confirm] = useConfirm();
 
   const [open, setOpen] = useState(false);
 
   const toggleDialog = async (value) => {
     if (!value) {
-      const close = await confirm();
+      const close = await confirm({
+        title: "Close",
+        message: "Are you sure you want to close?",
+        actionBtnMessage: "Close",
+      });
       if (close) {
         setOpen(false);
       }
@@ -73,8 +73,7 @@ const Nav = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            {/* <ArgumentForm closeDialog={() => setOpen(false)} isNew /> */}
-            <CreateArgumentForm />
+            <ArgumentForm closeDialog={() => setOpen(false)} isNew />
           </DialogContent>
         </Dialog>
         <div className="sm:flex-1 flex justify-end items-center gap-2 mr-3 relative">

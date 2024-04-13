@@ -39,7 +39,7 @@ import {
 import { formatDistance } from "date-fns";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { createClient } from "@/utils/supabase/client";
-import { variantReturner } from "../../constants";
+import { FORM_TYPE, variantReturner } from "../../constants";
 import useSWR from "swr";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Skeleton } from "../ui/skeleton";
@@ -49,17 +49,16 @@ import Image from "next/image";
 import { Button, buttonVariants } from "../ui/button";
 import { AuthContext } from "../AuthContext";
 import { useSearchParams } from "next/navigation";
+import { handleFocusCard } from "@/utils/focusCard";
 
 const Dialogs = {
-  supportFormDialog: "supportForm",
-  counterFormDialog: "counterForm",
   reportFormDialog: "reportForm",
   editFormDialog: "editForm",
 };
 
 const supabase = createClient();
 
-const CounterCard = ({ arg, addToArgus, className }) => {
+const CounterCard = ({ arg, addToArgus, showForm, className }) => {
   const [voteState, setVoteState] = useState(
     arg?.voted === "upvoted" ? 1 : arg?.voted === "downvoted" ? -1 : 0
   );
@@ -69,11 +68,7 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   const user = useContext(AuthContext);
   const [loginDialog, setLoginDialog] = useState(false);
 
-  const [ConfirmationDialog, confirm] = useConfirm(
-    "Are you sure?",
-    "This action cannot be undone",
-    "Close"
-  );
+  const [ConfirmationDialog, confirm] = useConfirm();
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const searchParams = useSearchParams();
@@ -174,7 +169,11 @@ const CounterCard = ({ arg, addToArgus, className }) => {
       return setOpen(value);
     }
     if (!value) {
-      const close = await confirm();
+      const close = await confirm({
+        title: "Discard changes?",
+        message: "Are you sure you want to discard your changes?",
+        actionBtnMessage: "Discard",
+      });
       if (close) {
         setOpen(false);
       }
@@ -184,22 +183,6 @@ const CounterCard = ({ arg, addToArgus, className }) => {
   };
 
   const Forms = {
-    supportForm: (
-      <ArgumentForm
-        arg={arg}
-        closeDialog={() => setOpen(false)}
-        isSupport
-        addToArgus={addToArgus}
-      />
-    ),
-    counterForm: (
-      <ArgumentForm
-        arg={arg}
-        closeDialog={() => setOpen(false)}
-        isCounter
-        addToArgus={addToArgus}
-      />
-    ),
     editForm: (
       <ArgumentForm
         arg={arg}
@@ -209,22 +192,6 @@ const CounterCard = ({ arg, addToArgus, className }) => {
       />
     ),
     reportForm: <ReportForm closeDialog={() => setOpen(false)} />,
-  };
-
-  const handleFocusCard = (hash) => {
-    const el = document.getElementById(hash);
-    el.scrollIntoView({
-      block: "center",
-      inline: "center",
-      behavior: "smooth",
-    });
-    el.animate(
-      [
-        { backgroundColor: "hsl(var(--primary) / 0.1)" },
-        { backgroundColor: "initial" },
-      ],
-      { duration: 2000, iterations: 1 }
-    );
   };
 
   return (
@@ -322,25 +289,6 @@ const CounterCard = ({ arg, addToArgus, className }) => {
               <ReadMore minLines={3} className="mb-3">
                 {arg?.argument}
               </ReadMore>
-              <ul className="w-32 sm:w-48 md:w-64">
-                {arg?.evidence?.map((ev) => {
-                  const evidence = JSON.parse(ev);
-                  return (
-                    <li
-                      key={evidence.source}
-                      className="truncate break-all w-full"
-                    >
-                      <Link
-                        href={evidence.source}
-                        target="_blank"
-                        className="font-normal text-xs sm:text-sm  text-blue-700 dark:text-blue-500 hover:underline"
-                      >
-                        {evidence.source}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
               <div className="mt-2 w-11/12">
                 {arg?.fallacies?.map((fallacy) => (
                   <Popover key={fallacy.id}>
@@ -374,22 +322,28 @@ const CounterCard = ({ arg, addToArgus, className }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="end">
                 <DropdownMenuGroup>
-                  <DialogTrigger
-                    asChild
-                    onClick={() => openDialog(Dialogs.counterFormDialog)}
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onClick={() =>
+                      showForm({
+                        [FORM_TYPE.COUNTER]: true,
+                        argId: arg.id,
+                      })
+                    }
                   >
-                    <DropdownMenuItem className="cursor-pointer gap-2">
-                      <LucideSword size={16} /> Counter
-                    </DropdownMenuItem>
-                  </DialogTrigger>
-                  <DialogTrigger
-                    asChild
-                    onClick={() => openDialog(Dialogs.supportFormDialog)}
+                    <LucideSword size={16} /> Counter
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onClick={() =>
+                      showForm({
+                        [FORM_TYPE.SUPPORT]: true,
+                        argId: arg.id,
+                      })
+                    }
                   >
-                    <DropdownMenuItem className="cursor-pointer gap-2">
-                      <FaShieldAlt size={16} /> Defend
-                    </DropdownMenuItem>
-                  </DialogTrigger>
+                    <FaShieldAlt size={16} /> Defend
+                  </DropdownMenuItem>
                   {arg?.user_id === user?.id ? (
                     <DialogTrigger
                       asChild

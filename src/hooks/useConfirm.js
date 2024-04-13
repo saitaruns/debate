@@ -13,14 +13,21 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AuthContext } from "@/components/AuthContext";
 
-const useConfirm = (title, message, actionBtnMessage = "Submit") => {
+const useConfirm = () => {
+  const [message, setMessage] = useState({
+    title: "Are you sure?",
+    message: "This cannot be undone. Are you sure you want to continue?",
+    actionBtnMessage: "Confirm",
+  });
   const user = useContext(AuthContext);
   const [promise, setPromise] = useState(null);
 
-  const confirm = () =>
-    new Promise((resolve, reject) => {
+  const confirm = (messageData) => {
+    setMessage(messageData);
+    return new Promise((resolve) => {
       setPromise({ resolve });
     });
+  };
 
   const handleClose = () => {
     setPromise(null);
@@ -42,13 +49,13 @@ const useConfirm = (title, message, actionBtnMessage = "Submit") => {
     <AlertDialog open={promise !== null}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{message}</AlertDialogDescription>
+          <AlertDialogTitle>{message.title}</AlertDialogTitle>
+          <AlertDialogDescription>{message.message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleConfirm}>
-            {actionBtnMessage}
+            {message.actionBtnMessage}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

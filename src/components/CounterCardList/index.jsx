@@ -9,6 +9,9 @@ import { Button } from "../ui/button";
 import { Loader, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import CreateArgumentForm from "../Forms/CreateArgumentForm";
+import { cn } from "@/lib/utils";
+import { FORM_TYPE } from "@/constants";
 
 const PAGE_SIZE = 2;
 
@@ -20,6 +23,11 @@ const CounterCardList = ({ argus: args }) => {
   );
   const searchParams = useSearchParams();
   const [renderedArgs, setRenderedArgs] = useState([]);
+  const [showForm, setShowForm] = useState({
+    [FORM_TYPE.SUPPORT]: false,
+    [FORM_TYPE.COUNTER]: false,
+    argId: null,
+  });
 
   const addToArgus = useCallback(({ arg, fallacies }) => {
     setArgus((prev) => {
@@ -48,7 +56,7 @@ const CounterCardList = ({ argus: args }) => {
               ...acc[index],
               argument: a.argument,
               title: a.title,
-              evidence: a.evidence,
+              // evidence: a.evidence,
             };
             return acc;
           }
@@ -64,6 +72,7 @@ const CounterCardList = ({ argus: args }) => {
       const { data: newArgs, error } = await supabase
         .rpc("get_argument_rows", {
           a_id: args[0].id,
+          m_arg_id: null,
           n: null,
         })
         .eq("level", argLevel)
@@ -134,25 +143,39 @@ const CounterCardList = ({ argus: args }) => {
 
   return (
     <>
-      <h1 className="text-xl font-normal mt-8 mb-5 break-all ">
+      <h1 className="text-xl font-normal mt-8 mb-5 break-all">
         {argus?.[0]?.title}
       </h1>
       {renderedArgs.map((args) => {
+        const argLevel = args[0].level;
+        const levelCount = args[0].level_count;
+
         return (
-          <GetCard
-            key={args[0].level}
-            argus={args}
-            addToArgus={addToArgus}
-            getMoreArgs={getMoreArgs}
-          />
+          <div className="flex flex-col" key={argLevel}>
+            <p
+              className={cn("text-xs mb-1 text-slate-500", {
+                "self-start": argLevel % 2 === 0,
+                "self-end": argLevel % 2 !== 0,
+              })}
+            >
+              {args.length}/{levelCount} arguments
+            </p>
+            <LevelCard
+              argus={args}
+              addToArgus={addToArgus}
+              getMoreArgs={getMoreArgs}
+              showForm={showForm}
+              setShowForm={setShowForm}
+            />
+          </div>
         );
       })}
     </>
   );
 };
 
-const GetCard = memo(
-  ({ argus, addToArgus, getMoreArgs }) => {
+const LevelCard = memo(
+  ({ argus, addToArgus, getMoreArgs, showForm, setShowForm }) => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
 
@@ -160,50 +183,82 @@ const GetCard = memo(
     const levelCount = argus[0].level_count;
 
     return (
-      <div
-        className={clsx(
-          "flex flex-col",
-          argLevel % 2 === 0 ? "items-start" : "items-end"
-        )}
-      >
-        <p className="text-xs mb-1 text-slate-500">
-          {argus.length}/{levelCount} arguments
-        </p>
-        <ListCard
-          autoScroll
-          className="w-11/12 sm:w-10/12 md:w-8/12 overflow-auto"
-          maxHeight="600px"
-        >
+      <>
+        <ListCard autoScroll>
           {argus.map((arg) => (
-            <CounterCard key={arg.id} arg={arg} addToArgus={addToArgus} />
+            <>
+              <CounterCard
+                key={arg.id}
+                arg={arg}
+                addToArgus={addToArgus}
+                showForm={setShowForm}
+                className={cn("w-11/12 sm:w-10/12 md:w-8/12", {
+                  "self-start": argLevel % 2 === 0,
+                  "self-end": argLevel % 2 !== 0,
+                })}
+              />
+              {(showForm[FORM_TYPE.COUNTER] || showForm[FORM_TYPE.SUPPORT]) &&
+              showForm.argId === arg.id ? (
+                <CreateArgumentForm
+                  key={`form_${arg.id}`}
+                  setShowForm={setShowForm}
+                  type={
+                    showForm[FORM_TYPE.COUNTER]
+                      ? FORM_TYPE.COUNTER
+                      : FORM_TYPE.SUPPORT
+                  }
+                  argId={arg.id}
+                  className={cn("w-11/12 sm:w-10/12 md:w-8/12 ", {
+                    "self-end":
+                      (argLevel % 2 === 0 && showForm[FORM_TYPE.COUNTER]) ||
+                      (argLevel % 2 !== 0 && showForm[FORM_TYPE.SUPPORT]),
+                    "self-start":
+                      (argLevel % 2 === 0 && showForm[FORM_TYPE.SUPPORT]) ||
+                      (argLevel % 2 !== 0 && showForm[FORM_TYPE.COUNTER]),
+                  })}
+                  addToArgus={addToArgus}
+                />
+              ) : null}
+            </>
           ))}
           {argus.length < levelCount ? (
-            <Button
-              variant="ghost"
-              className="w-fit mx-auto mt-1"
-              onClick={() => {
-                getMoreArgs({ argLevel, page, setLoading });
-                setPage((prevPage) => prevPage + 1);
-              }}
+            <div
+              className={cn(
+                "w-11/12 sm:w-10/12 md:w-8/12 flex justify-center items-center",
+                {
+                  "self-start": argLevel % 2 === 0,
+                  "self-end": argLevel % 2 !== 0,
+                }
+              )}
+              id="show-more"
             >
-              <span className="flex items-center gap-1">
-                <span>Show more</span>
-                {loading ? (
-                  <Loader className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="mr-2 h-4 w-4" />
-                )}
-              </span>
-            </Button>
+              <Button
+                variant="ghost"
+                className="w-fit mx-auto mt-1"
+                onClick={() => {
+                  getMoreArgs({ argLevel, page, setLoading });
+                  setPage((prevPage) => prevPage + 1);
+                }}
+              >
+                <span className="flex items-center gap-1">
+                  <span>Show more</span>
+                  {loading ? (
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Plus className="mr-2 h-4 w-4" />
+                  )}
+                </span>
+              </Button>
+            </div>
           ) : null}
         </ListCard>
-      </div>
+      </>
     );
   },
   (prevProps, nextProps) =>
     JSON.stringify(prevProps) === JSON.stringify(nextProps)
 );
 
-GetCard.displayName = "GetCard";
+LevelCard.displayName = "LevelCard";
 
 export default CounterCardList;

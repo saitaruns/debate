@@ -1,6 +1,7 @@
 "use client";
 
 import ListCard from "@/components/ListCard";
+import RenderHTML from "@/components/RenderHTML";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -164,9 +165,10 @@ const NotificationBox = () => {
                 <h3 className="text-sm font-medium line-clamp-2">
                   {getNotificationTitle(notification)}
                 </h3>
-                <div className="text-xs text-foreground text-wrap line-clamp-2">
-                  {notification?.message}
-                </div>
+                <RenderHTML
+                  html={notification?.message}
+                  className={"text-xs text-foreground text-wrap "}
+                />
                 <span className="font-normal text-xs text-muted-foreground">
                   {formatDistanceToNow(notification?.created_at, {
                     addSuffix: true,
