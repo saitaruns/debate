@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { handleFocusCard } from "@/utils/focusCard";
 import { createClient } from "@/utils/supabase/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { flushSync } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -53,6 +53,8 @@ const CreateArgumentForm = ({
 }) => {
   const limit = 500;
 
+  const [links, setLinks] = useState([]);
+  const [fallacies, setFallacies] = useState([]);
   const [ConfirmationDialog, confirm] = useConfirm();
 
   const argForm = useForm({
@@ -79,23 +81,43 @@ const CreateArgumentForm = ({
       .upsert([payload])
       .select("*, users!public_Argument_user_id_fkey(*)");
 
+    let fallacyData = [];
+    if (!error) {
+      const fas =
+        fallacies?.reduce((acc, { id }) => {
+          if (acc.findIndex((item) => item.fallacy_id === id) === -1) {
+            acc.push({ arg_id: argId, fallacy_id: id });
+          }
+          return acc;
+        }, []) || [];
+      const { data: fData, error: fallacyError } = await supabase
+        .from("ArgFallacyMap")
+        .upsert(fas)
+        .select("*, Fallacies(*)");
+      if (fallacyError) {
+        console.error(fallacyError);
+      } else {
+        fallacyData = fData;
+      }
+    }
+
     addToArgus({
       arg: {
         ...newArg,
       },
+      fallacies: fallacyData,
     });
-
     if (error) {
       console.error("Error creating argument", error);
     }
-
     argForm.reset();
-
-    flushSync(() => {
-      setShowForm({ [type]: false, argId: null });
-    });
-
+    setShowForm({ [type]: false, argId: null });
     handleFocusCard(`#arg_${newArg.id}`);
+  };
+
+  const handleSetDetails = ({ links, fallacies }) => {
+    setLinks(links);
+    setFallacies(fallacies);
   };
 
   const handleCancel = async () => {
@@ -131,8 +153,6 @@ const CreateArgumentForm = ({
 
       argForm.reset();
       setShowForm({ [type]: false, argId: null });
-
-      handleFocusCard(`#arg_${argId}`);
     }
   };
 
@@ -173,6 +193,7 @@ const CreateArgumentForm = ({
                     value={field.value}
                     className={cn("border rounded-md p-2")}
                     limit={limit}
+                    handleSetDetails={handleSetDetails}
                     {...field}
                   />
                 </FormControl>

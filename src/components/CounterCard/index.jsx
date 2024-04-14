@@ -289,32 +289,37 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
               <ReadMore minLines={3} className="mb-3">
                 {arg?.argument}
               </ReadMore>
-              <div className="mt-2 w-11/12">
-                {arg?.fallacies?.map((fallacy) => (
-                  <Popover key={fallacy.id}>
-                    <PopoverTrigger>
-                      <Badge
-                        variant={variantReturner(fallacy.name)}
-                        className="m-1 ml-0 cursor-pointer divide-x"
+              {arg?.fallacies && (
+                <div className="mt-2 w-11/12 border-t pt-1">
+                  <span className="text-xs text-slate-500">
+                    tagged by others:{" "}
+                  </span>
+                  {arg?.fallacies?.map((fallacy) => (
+                    <Popover key={fallacy.id}>
+                      <PopoverTrigger>
+                        <Badge
+                          variant={variantReturner(fallacy.name)}
+                          className="m-1 ml-0 cursor-pointer divide-x"
+                        >
+                          <span className="text-xs pr-1">{fallacy?.name}</span>
+                          <span className={cn("text-xs pl-1")}>
+                            {fallacy?.count}
+                          </span>
+                        </Badge>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="p-0"
+                        align="center"
+                        side="bottom"
                       >
-                        <span className="text-xs pr-1">{fallacy?.name}</span>
-                        <span className={cn("text-xs pl-1")}>
-                          {fallacy?.count}
-                        </span>
-                      </Badge>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="p-0"
-                      align="center"
-                      side="bottom"
-                    >
-                      <ViewLink
-                        link={`https://en.wikipedia.org/api/rest_v1/page/summary/${fallacy.name}`}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                ))}
-              </div>
+                        <ViewLink
+                          link={`https://en.wikipedia.org/api/rest_v1/page/summary/${fallacy.name}`}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  ))}
+                </div>
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger>

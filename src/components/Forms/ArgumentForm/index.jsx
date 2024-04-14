@@ -47,6 +47,8 @@ const ArgumentForm = ({
   closeDialog = () => {},
   addToArgus = () => {},
 }) => {
+  const [links, setLinks] = useState([]);
+  const [fallacies, setFallacies] = useState([]);
   const [argStrength, setArgStrength] = useState(0);
   const user = useContext(AuthContext);
 
@@ -76,8 +78,8 @@ const ArgumentForm = ({
   const argForm = useForm({
     resolver: zodResolver(argFormSchema),
     defaultValues: {
-      title: arg.title || null,
-      arg: arg.argument || { count: 0 },
+      title: arg?.title || null,
+      arg: arg?.argument || { count: 0 },
     },
   });
 
@@ -107,11 +109,39 @@ const ArgumentForm = ({
       ])
       .select("*, users!public_Argument_user_id_fkey(*)");
 
+    let fallacyData = [];
+    if (!error) {
+      const fas =
+        fallacies?.reduce((acc, { id }) => {
+          if (acc.findIndex((item) => item.fallacy_id === id) === -1) {
+            acc.push({
+              arg_id: arg?.counter_to || arg?.support_to,
+              fallacy_id: id,
+            });
+          }
+          return acc;
+        }, []) || [];
+      const { data: fData, error: fallacyError } = await supabase
+        .from("ArgFallacyMap")
+        .upsert(fas)
+        .select("*, Fallacies(*)");
+      if (fallacyError) {
+        console.error(fallacyError);
+      } else {
+        fallacyData = fData;
+      }
+    }
+
     addToArgus({
       arg: {
         ...newArg,
       },
+      fallacies: fallacyData,
     });
+    if (error) {
+      console.error("Error creating argument", error);
+    }
+    argForm.reset();
   };
 
   const onArgumentSubmit = async (data) => {
@@ -138,6 +168,11 @@ const ArgumentForm = ({
       actionBtnMessage: "Discard",
     });
     if (ans) closeDialog();
+  };
+
+  const handleSetDetails = ({ links, fallacies }) => {
+    setLinks(links);
+    setFallacies(fallacies);
   };
 
   if (!user) {
@@ -204,6 +239,7 @@ const ArgumentForm = ({
                   <TipTap
                     value={field.value}
                     className="border rounded-md p-2"
+                    handleSetDetails={handleSetDetails}
                     {...field}
                   />
                 </FormControl>

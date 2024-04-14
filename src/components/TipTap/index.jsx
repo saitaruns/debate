@@ -17,6 +17,9 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
 import TagList from "./TagList";
 import PlaceHolder from "@tiptap/extension-placeholder";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Input } from "../ui/input";
+import { flushSync } from "react-dom";
 
 const fallacies = [
   {
@@ -107,6 +110,7 @@ const fallacies = [
 
 const TipTap = ({
   onChange = () => {},
+  handleSetDetails = () => {},
   limit = 500,
   className,
   value = null,
@@ -121,12 +125,58 @@ const TipTap = ({
       PlaceHolder.configure({
         placeholder: "Write your argument here... ('/' to mention fallacies)",
       }),
-      CharacterCount.configure({
+      CharacterCount.extend({
+        onUpdate({ editor }) {
+          const json = editor.getJSON();
+          const extractFallaciesAndLinks = (content) => {
+            let fallacies = [];
+            let links = [];
+
+            const traverseNodes = (nodes) => {
+              nodes.forEach((node) => {
+                if (node.type === "mention") {
+                  fallacies.push({ ...node.attrs });
+                }
+                if (node.type === "link") {
+                  links.push({
+                    ...node.attrs,
+                  });
+                }
+                if (node.content) {
+                  traverseNodes(node.content);
+                } else if (node.marks) {
+                  traverseNodes(node.marks);
+                }
+              });
+            };
+
+            traverseNodes(content);
+
+            return [fallacies, links];
+          };
+
+          const [fallacies, links] = extractFallaciesAndLinks(json.content);
+          this.storage.links = () => {
+            return links || [];
+          };
+
+          this.storage.fallacies = () => {
+            return fallacies || [];
+          };
+        },
+      }).configure({
         limit,
       }),
-      Link.configure({
-        openOnClick: true,
+      Link.extend({
+        inclusive: false,
+      }).configure({
+        openOnClick: false,
         validate: (href) => /^https?:\/\//.test(href),
+        HTMLAttributes: {
+          class: "fallacy-link",
+          target: "_blank",
+          rel: "noopener noreferrer",
+        },
       }),
       Mention.configure({
         renderHTML({ options, node }) {
@@ -179,11 +229,23 @@ const TipTap = ({
     },
     onUpdate({ editor }) {
       const content = editor.getHTML();
-      console.log(content);
+
+      const links = editor.storage.characterCount.links();
       const charCount = editor.storage.characterCount.characters();
-      onChange({
-        content,
-        count: charCount,
+      const fallacies = editor.storage.characterCount.fallacies();
+
+      console.log("fallacies", fallacies, "links", links, "count", charCount);
+
+      flushSync(() => {
+        handleSetDetails({
+          links,
+          fallacies,
+        });
+
+        onChange({
+          content,
+          count: charCount,
+        });
       });
     },
     onCreate({ editor }) {
@@ -191,30 +253,32 @@ const TipTap = ({
     },
   });
 
-  const setLink = useCallback(() => {
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
+  const setLink = useCallback(
+    (url) => {
+      // const previousUrl = editor.getAttributes("link").href;
 
-    // cancelled
-    if (url === null) {
-      return;
-    }
+      // cancelled
+      if (url === null) {
+        return;
+      }
 
-    // empty
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      // empty
+      if (url === "") {
+        editor.chain().focus().extendMarkRange("link").unsetLink().run();
 
-      return;
-    }
+        return;
+      }
 
-    // update link
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .setLink({ href: url, target: "_blank" })
-      .run();
-  }, [editor]);
+      // update link
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url, target: "_blank" })
+        .run();
+    },
+    [editor]
+  );
 
   if (!editor || !fallacies.length) {
     return (
@@ -267,16 +331,27 @@ const TipTap = ({
         >
           S
         </Button>
-        <Button
-          type="button"
-          variant="icon"
-          onClick={setLink}
-          className={cn("rounded-full", {
-            "bg-secondary": editor.isActive("link"),
-          })}
-        >
-          <Link2 size={16} />
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="icon"
+              className={cn("rounded-full", {
+                "bg-secondary": editor.isActive("link"),
+              })}
+            >
+              <Link2 size={16} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="center" side="bottom" className="space-y-1">
+            <p className="text-xs sm:text-sm">Add a link to your argument.</p>
+            <Input
+              type="text"
+              placeholder="https://example.com"
+              onChange={(e) => setLink(e.target.value)}
+            />
+          </PopoverContent>
+        </Popover>
         <Button
           type="button"
           variant="icon"
