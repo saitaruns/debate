@@ -259,7 +259,7 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
             </div>
             <div className="flex flex-col flex-1">
               {arg?.counter_to ? (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-slate-500 mb-1">
                   countering{" "}
                   <Badge
                     variant="shad"
@@ -273,7 +273,7 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
                 </div>
               ) : null}
               {arg?.support_to ? (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-slate-500 mb-1">
                   supporting{" "}
                   <Badge
                     variant="shad"

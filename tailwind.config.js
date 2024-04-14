@@ -84,7 +84,8 @@ module.exports = {
         DEFAULT: {
           css: {
             "*": {
-              lineHeight: "1.25",
+              lineHeight: "1.75",
+              margin: "0",
             },
             h3: {
               fontWeight: "300",

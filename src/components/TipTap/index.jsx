@@ -1,6 +1,6 @@
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, ReactRenderer, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import Underline from "@tiptap/extension-underline";
@@ -14,13 +14,113 @@ import {
 } from "lucide-react";
 import Link from "@tiptap/extension-link";
 import CharacterCount from "@tiptap/extension-character-count";
+import Mention from "@tiptap/extension-mention";
+import TagList from "./TagList";
+import PlaceHolder from "@tiptap/extension-placeholder";
 
-const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
+const fallacies = [
+  {
+    label: "Ad Hominem",
+    id: 1,
+  },
+  {
+    label: "Strawman",
+    id: 2,
+  },
+  {
+    label: "False Dilemma",
+    id: 3,
+  },
+  {
+    label: "Slippery Slope",
+    id: 4,
+  },
+  {
+    label: "Appeal to Authority",
+    id: 5,
+  },
+  {
+    label: "Appeal to Ignorance",
+    id: 6,
+  },
+  {
+    label: "Circular Reasoning",
+    id: 7,
+  },
+  {
+    label: "Hasty Generalization",
+    id: 8,
+  },
+  {
+    label: "Post Hoc Ergo Propter Hoc",
+    id: 9,
+  },
+  {
+    label: "Red Herring",
+    id: 10,
+  },
+  {
+    label: "Appeal to Emotion",
+    id: 11,
+  },
+  {
+    label: "Tu Quoque",
+    id: 12,
+  },
+  {
+    label: "False Cause",
+    id: 13,
+  },
+  {
+    label: "Begging the Question",
+    id: 14,
+  },
+  {
+    label: "Appeal to Nature",
+    id: 15,
+  },
+  {
+    label: "Composition and Division",
+    id: 16,
+  },
+  {
+    label: "No True Scotsman",
+    id: 17,
+  },
+  {
+    label: "Genetic Fallacy",
+    id: 18,
+  },
+  {
+    label: "Equivocation",
+    id: 19,
+  },
+  {
+    label: "Appeal to Tradition",
+    id: 20,
+  },
+  {
+    label: "Bandwagon Fallacy",
+    id: 21,
+  },
+];
+
+const TipTap = ({
+  onChange = () => {},
+  limit = 500,
+  className,
+  value = null,
+}) => {
+  const mentionsRef = useRef(null);
+
   const editor = useEditor({
     content: ``,
     extensions: [
       StarterKit,
       Underline,
+      PlaceHolder.configure({
+        placeholder: "Write your argument here... ('/' to mention fallacies)",
+      }),
       CharacterCount.configure({
         limit,
       }),
@@ -28,15 +128,58 @@ const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
         openOnClick: true,
         validate: (href) => /^https?:\/\//.test(href),
       }),
+      Mention.configure({
+        renderHTML({ options, node }) {
+          return ["span", options.HTMLAttributes, node.attrs.label];
+        },
+        HTMLAttributes: {
+          class: "fallacy-tag",
+          "data-type": "fallacy",
+        },
+        suggestion: {
+          char: "/",
+          allowSpaces: true,
+          items: ({ query }) => {
+            return fallacies.filter((item) =>
+              item.label.toLowerCase().startsWith(query.toLowerCase())
+            );
+          },
+          render: () => {
+            let component;
+            return {
+              onStart: (props) => {
+                component = new ReactRenderer(TagList, {
+                  props,
+                  editor: props.editor,
+                });
+
+                const element = component.element;
+
+                mentionsRef.current.appendChild(element);
+              },
+
+              onUpdate(props) {
+                component.updateProps(props);
+              },
+
+              onExit() {
+                component.destroy();
+              },
+            };
+          },
+        },
+      }),
     ],
+
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-dark break-words whitespace-pre-wrap outline-none w-full ring-0 ring-transparent focus:ring-0 focus:ring-transparent focus:ring-offset-0",
+          "[&_.is-editor-empty::before]:text-sm [&_.is-editor-empty::before]:text-muted-foreground [&_.is-editor-empty::before]:float-left [&_.is-editor-empty::before]:h-0 [&_.is-editor-empty::before]:content-[attr(data-placeholder)] prose dark:prose-dark break-words whitespace-pre-wrap outline-none w-full ring-0 ring-transparent focus:ring-0 focus:ring-transparent focus:ring-offset-0 ",
       },
     },
     onUpdate({ editor }) {
       const content = editor.getHTML();
+      console.log(content);
       const charCount = editor.storage.characterCount.characters();
       onChange({
         content,
@@ -44,7 +187,7 @@ const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
       });
     },
     onCreate({ editor }) {
-      editor.commands.setContent(value);
+      if (value !== null) editor.commands.setContent(value);
     },
   });
 
@@ -73,7 +216,7 @@ const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
       .run();
   }, [editor]);
 
-  if (!editor) {
+  if (!editor || !fallacies.length) {
     return (
       <div className="flex items-center justify-center h-full">
         <p>Loading...</p>
@@ -82,7 +225,7 @@ const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
   }
 
   return (
-    <div className={cn(className)}>
+    <div className={cn(className, "relative")}>
       <div className=" flex gap-1 flex-wrap border-b pb-1">
         <Button
           type="button"
@@ -187,10 +330,14 @@ const TipTap = ({ onChange = () => {}, limit = 500, className, value }) => {
           <MessageSquareQuote size={16} />
         </Button>
       </div>
-
       <div className="pt-4 px-4 pb-3 overflow-auto">
         <EditorContent editor={editor} />
       </div>
+      <div
+        id="mention-suggestion"
+        className={cn("w-full bg-secondary rounded-sm", {})}
+        ref={mentionsRef}
+      ></div>
     </div>
   );
 };

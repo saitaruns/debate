@@ -76,7 +76,7 @@ const ArgumentForm = ({
   const argForm = useForm({
     resolver: zodResolver(argFormSchema),
     defaultValues: {
-      title: arg.title || "",
+      title: arg.title || null,
       arg: arg.argument || { count: 0 },
     },
   });
@@ -165,7 +165,7 @@ const ArgumentForm = ({
     <Form {...argForm}>
       <form
         onSubmit={argForm.handleSubmit(onArgumentSubmit)}
-        className={cn("lg:min-w-[600px]")}
+        className={cn("lg:max-w-lg")}
       >
         <DialogHeader className="mb-3">
           <DialogTitle>{isEdit ? "Edit Argument" : "New Argument"}</DialogTitle>
@@ -243,7 +243,7 @@ const ArgumentForm = ({
             </div>
           </Popover>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCancel}>
+            <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
             <Button type="submit" className="m-0">

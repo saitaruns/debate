@@ -62,8 +62,14 @@
   }
   body {
     @apply bg-background text-foreground; 
+  } 
+}
+
+@layer components {
+  .fallacy-tag {
+    @apply bg-secondary text-secondary-foreground cursor-pointer rounded-sm px-2 py-1 text-xs inline-block;
+    /* @apply data-[label="Strawman"]:bg-red-400  */
   }
-  
 }
 
 @layer utilities {

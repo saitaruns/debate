@@ -3,7 +3,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import ListCard from "../ListCard";
 import CounterCard from "../CounterCard";
-import clsx from "clsx";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "../ui/button";
 import { Loader, Plus } from "lucide-react";
