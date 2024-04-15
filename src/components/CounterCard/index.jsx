@@ -292,7 +292,7 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
               {arg?.fallacies && (
                 <div className="mt-2 w-11/12 border-t pt-1">
                   <span className="text-xs text-slate-500">
-                    tagged by others:{" "}
+                    tagged by others as:{" "}
                   </span>
                   {arg?.fallacies?.map((fallacy) => (
                     <Popover key={fallacy.id}>
