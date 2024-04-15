@@ -367,9 +367,9 @@ const TipTap = ({
         <Button
           type="button"
           variant="icon"
-          onClick={() => editor.chain().focus().toggleCode().run()}
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={cn("rounded-full", {
-            "bg-secondary": editor.isActive("code"),
+            "bg-secondary": editor.isActive("codeBlock"),
           })}
         >
           <Code2 size={16} />
