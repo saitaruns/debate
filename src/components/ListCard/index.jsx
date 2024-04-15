@@ -68,12 +68,12 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
 
   return (
     <div className={cn(className, "relative")}>
-      {isShadow && (
+      {/* {isShadow && (
         <div
           className={cn(
             "absolute pointer-events-none top-0 right-0 w-full h-[10%] z-10",
             "bg-gradient-to-b from-neutral-300 via-transparent to-transparent blur-sm",
-            "dark:from-neutral-700 dark:via-transparent dark:to-transparent",
+            "dark:hidden",
             "opacity-0 transition-opacity duration-200 ease-in-out",
             {
               "opacity-1000": scrollState === 1,
@@ -81,7 +81,7 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
             }
           )}
         />
-      )}
+      )} */}
 
       <div
         ref={ref}
@@ -91,19 +91,19 @@ const ListCard = ({ children, className, autoScroll = false, maxHeight }) => {
         {children}
       </div>
 
-      {isShadow && (
+      {/* {isShadow && (
         <div
           className={cn(
             "absolute pointer-events-none bottom-0 right-0 w-full h-[10%] z-10",
             "bg-gradient-to-t from-neutral-300 via-transparent to-transparent blur-sm",
-            "dark:from-neutral-700 dark:via-transparent dark:to-transparent",
+            "dark:hidden",
             "opacity-100 transition-opacity duration-200 ease-in-out",
             {
               "opacity-0": scrollState === 2,
             }
           )}
         />
-      )}
+      )} */}
     </div>
   );
 };

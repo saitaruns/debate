@@ -224,7 +224,7 @@ const TipTap = ({
     editorProps: {
       attributes: {
         class:
-          "[&_.is-editor-empty::before]:text-sm [&_.is-editor-empty::before]:text-muted-foreground [&_.is-editor-empty::before]:float-left [&_.is-editor-empty::before]:h-0 [&_.is-editor-empty::before]:content-[attr(data-placeholder)] prose dark:prose-dark break-words whitespace-pre-wrap outline-none w-full ring-0 ring-transparent focus:ring-0 focus:ring-transparent focus:ring-offset-0 ",
+          "[&_.is-editor-empty::before]:text-sm [&_.is-editor-empty::before]:text-muted-foreground [&_.is-editor-empty::before]:float-left [&_.is-editor-empty::before]:h-0 [&_.is-editor-empty::before]:content-[attr(data-placeholder)] prose dark:prose-invert break-words whitespace-pre-wrap outline-none w-full ring-0 ring-transparent focus:ring-0 focus:ring-transparent focus:ring-offset-0 ",
       },
     },
     onUpdate({ editor }) {

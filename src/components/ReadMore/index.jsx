@@ -35,7 +35,7 @@ const ReadMore = ({ children: text, className, minLines = 3 }) => {
       <span
         ref={paragraphRef}
         className={cn(
-          "prose dark:prose-dark",
+          "prose dark:prose-invert",
           "w-11/12 text-sm overflow-hidden",
           {
             [`line-clamp-${minLines}`]: isTruncated,
