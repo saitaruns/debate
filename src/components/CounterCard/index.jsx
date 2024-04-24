@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, useContext, useEffect, useRef, useState } from "react";
-import { Card, CardContent, CardFooter } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { FaShieldAlt } from "react-icons/fa";
 import ReadMore from "../ReadMore";
 import { Badge } from "../ui/badge";
@@ -58,7 +58,14 @@ const Dialogs = {
 
 const supabase = createClient();
 
-const CounterCard = ({ arg, addToArgus, showForm, className }) => {
+const CounterCard = ({
+  arg,
+  addToArgus,
+  showForm,
+  className,
+  isLast,
+  mainArg,
+}) => {
   const [voteState, setVoteState] = useState(
     arg?.voted === "upvoted" ? 1 : arg?.voted === "downvoted" ? -1 : 0
   );
@@ -72,6 +79,8 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
   const [copiedText, copyToClipboard] = useCopyToClipboard();
 
   const searchParams = useSearchParams();
+
+  const isMain = mainArg.id === arg.id;
 
   const handleVote = async (vote) => {
     const {
@@ -199,98 +208,99 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
       <Dialog open={open} onOpenChange={toggleDialog}>
         <Card
           className={cn(
-            "relative my-2  hover:opacity-100 transition-all delay-200",
+            "relative m-0 mb-4 bg-transparent hover:opacity-100 transition-all delay-200 border-0 shadow-none",
             {
               "border-l-4 border-green-700": searchParams.has("arg", arg.id),
               // "opacity-55": voteCount < -10,
+            },
+            {
+              "bg-secondary/45": isMain,
             },
             className
           )}
           id={`#arg_${arg.id}`}
         >
-          <CardContent className="flex p-3 pt-6 pb-0 items-start relative">
-            <Badge
-              variant="shad"
-              className="mb-2 absolute -top-2 right-1 bg-background select-none"
-              onClick={() => {
-                copyToClipboard(
-                  location.host + location.pathname + `?arg=${arg.id}`
-                );
-                toast("Link copied to clipboard", {
-                  type: "success",
-                });
-              }}
-            >
-              #{arg.id}
-            </Badge>
-            <div className="flex flex-col pr-2 items-center">
-              <ArrowBigUp
-                size={24}
-                strokeWidth={1}
-                className={cn(
-                  "cursor-pointer",
-                  "transition-all active:-translate-y-[0.75px]",
-                  {
-                    "fill-primary stroke-primary": voteState === 1,
+          {isMain && (
+            <CardHeader className="p-2 text-sm mb-2 font-semibold bg-secondary rounded-t-xl border-b">
+              Main Argument
+            </CardHeader>
+          )}
+          <CardContent className="flex p-0 relative space-x-2">
+            <div className="flex flex-col items-center w-12">
+              <Avatar className="size-10">
+                <AvatarImage
+                  src={
+                    arg?.user_data?.avatar_url || arg?.users?.data?.avatar_url
                   }
-                )}
-                onClick={upVote}
-              />
-              <span
-                className={cn("text-sm font-semibold", "transition-all", {
-                  "text-primary": voteCount > 0,
-                  "text-destructive": voteCount < 0,
-                })}
-              >
-                {voteCount}
-              </span>
-              <ArrowBigDown
-                size={24}
-                strokeWidth={1}
-                className={cn(
-                  "cursor-pointer",
-                  "transition-all active:translate-y-[0.75px]",
-                  {
-                    "fill-destructive stroke-destructive": voteState === -1,
-                  }
-                )}
-                onClick={downVote}
-              />
+                />
+                <AvatarFallback className="text-[8px]">OM</AvatarFallback>
+              </Avatar>
+              {!isLast && (
+                <div
+                  className={cn("w-1 absolute top-10 h-full bg-secondary", {
+                    // "bg-green-500": arg.level % 2 === 0,
+                    // "bg-blue-500": arg.level % 2 !== 0,
+                  })}
+                ></div>
+              )}
             </div>
-            <div className="flex flex-col flex-1">
-              {arg?.counter_to ? (
-                <div className="text-xs text-slate-500 mb-1">
-                  countering{" "}
-                  <Badge
-                    variant="shad"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      handleFocusCard(`#arg_${arg.counter_to}`);
-                    }}
-                  >
-                    #{arg?.counter_to}
-                  </Badge>
-                </div>
-              ) : null}
-              {arg?.support_to ? (
-                <div className="text-xs text-slate-500 mb-1">
-                  supporting{" "}
-                  <Badge
-                    variant="shad"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      handleFocusCard(`#arg_${arg.support_to}`);
-                    }}
-                  >
-                    #{arg?.support_to}
-                  </Badge>
-                </div>
-              ) : null}
-              <ReadMore minLines={3} className="mb-3">
+            <div className="flex flex-col flex-1 border-b pb-3">
+              <p className="text-sm font-medium leading-none space-x-1">
+                <Link href={`/profile/${arg?.user_id}`} passHref>
+                  <span className="hover:underline">
+                    {arg?.user_data?.name || arg?.users?.data?.name}
+                  </span>
+                  <span className="text-xs text-slate-500">
+                    {arg?.user_id === mainArg.user_id ? (
+                      <span className="text-xs text-slate-500"> (Author)</span>
+                    ) : null}
+                  </span>
+                  <span className="text-xs text-slate-500">
+                    {arg?.user_id === user?.id ? (
+                      <span className="text-xs text-slate-500"> (You)</span>
+                    ) : null}
+                  </span>
+                </Link>
+                {arg?.counter_to ? (
+                  <span className="text-xs text-slate-500 mb-1">
+                    countering{" "}
+                    <Badge
+                      variant="shad"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        handleFocusCard(`#arg_${arg.counter_to}`);
+                      }}
+                    >
+                      #{arg?.counter_to}
+                    </Badge>
+                  </span>
+                ) : null}
+                {arg?.support_to ? (
+                  <span className="text-xs text-slate-500 mb-1">
+                    supporting{" "}
+                    <Badge
+                      variant="shad"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        handleFocusCard(`#arg_${arg.support_to}`);
+                      }}
+                    >
+                      #{arg?.support_to}
+                    </Badge>
+                  </span>
+                ) : null}
+
+                <span className="font-normal text-xs text-muted-foreground">
+                  {formatDistance(arg.created_at, new Date(), {
+                    addSuffix: true,
+                  })}
+                </span>
+              </p>
+              <ReadMore minLines={3} className="mb-3 mt-2">
                 {arg?.argument}
               </ReadMore>
               {arg?.fallacies && (
-                <div className="mt-2 w-11/12 border-t pt-1">
+                <div className="mt-2 w-11/12 pt-1">
                   <span className="text-xs text-slate-500">
                     tagged by others as:{" "}
                   </span>
@@ -320,10 +330,45 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
                   ))}
                 </div>
               )}
+              <div className="flex items-center">
+                <ArrowBigUp
+                  size={24}
+                  strokeWidth={1}
+                  className={cn(
+                    "cursor-pointer",
+                    "transition-all active:-translate-y-[0.75px]",
+                    {
+                      "fill-primary stroke-primary": voteState === 1,
+                    }
+                  )}
+                  onClick={upVote}
+                />
+                <span
+                  className={cn("text-sm font-semibold", "transition-all", {
+                    "text-primary": voteCount > 0,
+                    "text-destructive": voteCount < 0,
+                  })}
+                >
+                  {voteCount}
+                </span>
+                <ArrowBigDown
+                  size={24}
+                  strokeWidth={1}
+                  className={cn(
+                    "cursor-pointer",
+                    "transition-all active:translate-y-[0.75px]",
+                    {
+                      "fill-destructive stroke-destructive": voteState === -1,
+                    }
+                  )}
+                  onClick={downVote}
+                />
+              </div>
             </div>
+
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <HiDotsVertical className="" />
+              <DropdownMenuTrigger className="self-start">
+                <HiDotsVertical />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="bottom" align="end">
                 <DropdownMenuGroup>
@@ -385,31 +430,6 @@ const CounterCard = ({ arg, addToArgus, showForm, className }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </CardContent>
-          <CardFooter className="flex justify-end mt-3">
-            <Link
-              href={`/profile/${arg?.user_id}`}
-              className="flex items-center space-x-2 group"
-            >
-              <Avatar className="size-4">
-                <AvatarImage
-                  src={
-                    arg?.user_data?.avatar_url || arg?.users?.data?.avatar_url
-                  }
-                />
-                <AvatarFallback className="text-[8px]">OM</AvatarFallback>
-              </Avatar>
-              <p className="text-xs font-medium leading-none space-x-1">
-                <span className="group-hover:underline">
-                  {arg?.user_data?.name || arg?.users?.data?.name}
-                </span>
-                <span className="font-normal group-hover:underline">
-                  {formatDistance(arg.created_at, new Date(), {
-                    addSuffix: true,
-                  })}
-                </span>
-              </p>
-            </Link>
-          </CardFooter>
         </Card>
         <DialogPortal forceMount>
           <DialogContent>{Forms[dialog]}</DialogContent>

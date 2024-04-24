@@ -150,7 +150,7 @@ const CounterCardList = ({ argus: args }) => {
         const levelCount = args[0].level_count;
 
         return (
-          <div className="flex flex-col" key={argLevel}>
+          <div className="flex flex-col " key={argLevel}>
             <p
               className={cn("text-xs mb-1 text-slate-500", {
                 "self-start": argLevel % 2 === 0,
@@ -161,6 +161,7 @@ const CounterCardList = ({ argus: args }) => {
             </p>
             <LevelCard
               argus={args}
+              mainArg={argus[0]}
               addToArgus={addToArgus}
               getMoreArgs={getMoreArgs}
               showForm={showForm}
@@ -174,7 +175,7 @@ const CounterCardList = ({ argus: args }) => {
 };
 
 const LevelCard = memo(
-  ({ argus, addToArgus, getMoreArgs, showForm, setShowForm }) => {
+  ({ argus, addToArgus, getMoreArgs, showForm, setShowForm, mainArg }) => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
 
@@ -189,11 +190,15 @@ const LevelCard = memo(
               <CounterCard
                 key={arg.id}
                 arg={arg}
+                mainArg={mainArg}
+                isLast={argus[argus.length - 1].id === arg.id}
                 addToArgus={addToArgus}
                 showForm={setShowForm}
                 className={cn("w-11/12 sm:w-10/12 md:w-8/12", {
                   "self-start": argLevel % 2 === 0,
                   "self-end": argLevel % 2 !== 0,
+                  // "bg-green-200": argLevel % 2 === 0,
+                  // "bg-blue-200": argLevel % 2 !== 0,
                 })}
               />
               {(showForm[FORM_TYPE.COUNTER] || showForm[FORM_TYPE.SUPPORT]) &&
